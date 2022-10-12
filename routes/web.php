@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BillController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +18,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+// Route::get('/payment', function () {
+//     return view('dashboard.payment.add');
+// });
+Route::get('payment', [PaymentController::class, 'index']);
+Route::get('payment/add', [PaymentController::class, 'store']);
+Route::get('bill/mass_add', [BillController::class, 'mass_store']);
