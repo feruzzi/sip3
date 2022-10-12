@@ -46,8 +46,7 @@ class BillController extends Controller
             'group1' => $request->group1,
             'group2' => $request->group2
         ])->pluck('username');
-        $amount = Payment::where('payment_id', $request->payment)->pluck('payment_amount');
-        // dd($amount);
+        $amount = Payment::where('payment_id', $request->payment)->value('payment_amount');
         foreach ($username as $x => $user) {
             Bill::create([
                 'username' => $user,
