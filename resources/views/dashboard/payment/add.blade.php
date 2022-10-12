@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 @php
-// dd($payments);
+// dd($bills);
 @endphp
 
 <head>
@@ -35,6 +35,24 @@
         </select>
         <button type="submit">Submit</button>
     </form>
+    <hr>
+    <h1>Tabel Tagihan</h1>
+    <table>
+        <thead>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Tagihan</th>
+        </thead>
+        <tbody>
+            @foreach ($bills as $bill)
+                <tr>
+                    <td>{{ $bill->username }}</td>
+                    <td>{{ $bill->name }}</td>
+                    <td>{{ $bill->tagihan }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 </body>
 
 </html>

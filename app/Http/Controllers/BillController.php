@@ -16,7 +16,8 @@ class BillController extends Controller
      */
     public function index()
     {
-        //
+        //SELECT bills.username,users.name,COUNT(bills.bill_id) AS tagihan FROM `bills` INNER JOIN `users` ON bills.username=users.username GROUP BY bills.username;
+
     }
 
     /**

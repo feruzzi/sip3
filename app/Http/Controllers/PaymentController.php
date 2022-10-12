@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use App\Models\Bills;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -15,9 +17,13 @@ class PaymentController extends Controller
     public function index()
     {
         // dd(Payment::all());
-
+        $bills = DB::table('bills')
+            ->select(DB::raw('bills.username,users.name,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
+            ->groupBy('bills.username')
+            ->get();
         return view('dashboard.payment.add', [
-            'payments' => Payment::where('payment_status', 1)->get()
+            'payments' => Payment::where('payment_status', 1)->get(),
+            'bills' => $bills
         ]);
     }
 
