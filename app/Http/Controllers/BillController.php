@@ -21,7 +21,7 @@ class BillController extends Controller
             ->select(DB::raw('bills.username,users.name,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
             ->groupBy('bills.username')
             ->get();
-        return view('dashboard.bill', [
+        return view('dashboard.bill.index', [
             'payments' => Payment::where('payment_status', 1)->get(),
             'bills' => $bills
         ]);
@@ -45,7 +45,14 @@ class BillController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //Tambah tagihan target username
+        Bill::create([
+            'username' => $request->username,
+            'bill_id' => "random", //random,
+            'payment_id' => $request->payment,
+            'date' => date("Y-m-d"), //date_now(),
+            'bill_amount' => $request->bill_amount
+        ]);
     }
     public function mass_store(Request $request)
     {
@@ -58,9 +65,9 @@ class BillController extends Controller
         foreach ($username as $x => $user) {
             Bill::create([
                 'username' => $user,
-                'bill_id' => "bl" . $user . $x,
+                'bill_id' => "bl" . $user . "3", //ganti ke random genareate
                 'payment_id' => $request->payment,
-                'date' => "2022-10-10",
+                'date' => date("Y-m-d"),
                 'bill_amount' => $amount,
             ]);
         }
@@ -74,7 +81,7 @@ class BillController extends Controller
      */
     public function show(Bill $bill)
     {
-        //
+        //SELECT payments.payment_name,bills.bill_amount FROM bills INNER JOIN payments ON bills.payment_id = payments.payment_id WHERE bills.username="user2";
     }
 
     /**
