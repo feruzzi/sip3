@@ -6,6 +6,7 @@ use App\Models\Bill;
 use App\Models\User;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BillController extends Controller
 {
@@ -16,8 +17,14 @@ class BillController extends Controller
      */
     public function index()
     {
-        //SELECT bills.username,users.name,COUNT(bills.bill_id) AS tagihan FROM `bills` INNER JOIN `users` ON bills.username=users.username GROUP BY bills.username;
-
+        $bills = DB::table('bills')
+            ->select(DB::raw('bills.username,users.name,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
+            ->groupBy('bills.username')
+            ->get();
+        return view('dashboard.bill', [
+            'payments' => Payment::where('payment_status', 1)->get(),
+            'bills' => $bills
+        ]);
     }
 
     /**

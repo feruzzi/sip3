@@ -21,7 +21,7 @@ class PaymentController extends Controller
             ->select(DB::raw('bills.username,users.name,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
             ->groupBy('bills.username')
             ->get();
-        return view('dashboard.payment.add', [
+        return view('dashboard.payment.index', [
             'payments' => Payment::where('payment_status', 1)->get(),
             'bills' => $bills
         ]);

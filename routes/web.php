@@ -23,4 +23,5 @@ Route::get('/', function () {
 // });
 Route::get('payment', [PaymentController::class, 'index']);
 Route::get('payment/add', [PaymentController::class, 'store']);
+Route::get('bill', [BillController::class, 'index']);
 Route::get('bill/mass_add', [BillController::class, 'mass_store']);
