@@ -9,6 +9,11 @@
 </head>
 
 <body>
+    <div>
+        <a href="{{ url('payment') }}">Pembyaran</a>
+        <a href="{{ url('bill') }}">Tagihan</a>
+        <a href="{{ url('transaction') }}">Transaksi</a>
+    </div>
     <h1>Tagihan Berkelompok</h1>
     <form action="{{ url('bill/mass_add') }}">
         @csrf

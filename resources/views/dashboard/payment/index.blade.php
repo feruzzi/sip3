@@ -15,7 +15,7 @@
     <div>
         <a href="{{ url('payment') }}">Pembyaran</a>
         <a href="{{ url('bill') }}">Tagihan</a>
-        <a href="{{ url('transaksi') }}">Transaksi</a>
+        <a href="{{ url('transaction') }}">Transaksi</a>
     </div>
     <h1>Tambah Pembayaran</h1>
     <form action="{{ url('payment/add') }}">
