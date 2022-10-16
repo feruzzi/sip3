@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Bill;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 
@@ -52,6 +53,14 @@ class PageController extends Controller
             'transactions' => $transactions,
             'name' => $transactions->value('name'),
             'transaction_total' => $transactions->sum('pay')
+        ]);
+    }
+    public function change_password()
+    {
+        $user = "user2";
+        return view('change-password', [
+            'set_active' => 'change_password',
+            'name' => User::where('username', '=', $user)->value('name'),
         ]);
     }
 }

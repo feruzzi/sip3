@@ -28,6 +28,7 @@ Route::get('/', function () {
 // });
 Route::get('info/bill', [PageController::class, 'info_bill']);
 Route::get('info/transaction', [PageController::class, 'info_transaction']);
+Route::get('change-password', [PageController::class, 'change_password']);
 Route::get('payment', [PaymentController::class, 'index']);
 Route::get('payment/add', [PaymentController::class, 'store']);
 Route::get('bill', [BillController::class, 'index']);

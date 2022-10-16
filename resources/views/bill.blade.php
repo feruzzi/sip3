@@ -1,6 +1,6 @@
 @extends('layouts.main.main')
 @section('table_title', 'Tagihan')
-@section('content_title', 'Tagihan')
+@section('content_title', 'Lihat Tagihan Anda')
 {{-- <!DOCTYPE html>
 <html lang="en">
 
@@ -118,7 +118,7 @@
                         <h4 class="card-title">Tagihan {{ $name }}</h4>
                     </div>
                     <div class="card-content">
-                        <div class="table-responsive">
+                        <div class="table-responsive m-3">
                             <table class="table table-hover table-bordered mb-0">
                                 <thead>
                                     <tr>
