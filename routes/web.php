@@ -20,6 +20,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('index');
 });
+
+// Route::get('/dashboard', function () {
+//     return view('dashboard.index');
+// });
 // Route::get('/info/transaction', function () {
 //     return view('transaction');
 // });
@@ -29,6 +33,7 @@ Route::get('/', function () {
 Route::get('info/bill', [PageController::class, 'info_bill']);
 Route::get('info/transaction', [PageController::class, 'info_transaction']);
 Route::get('change-password', [PageController::class, 'change_password']);
+Route::get('dashboard', [PageController::class, 'dashboard']);
 Route::get('payment', [PaymentController::class, 'index']);
 Route::get('payment/add', [PaymentController::class, 'store']);
 Route::get('bill', [BillController::class, 'index']);
