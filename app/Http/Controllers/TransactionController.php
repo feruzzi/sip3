@@ -24,6 +24,7 @@ class TransactionController extends Controller
         //SELECT bills.username,COALESCE(transaksi,0)-SUM(bills.bill_amount) FROM bills LEFT JOIN (SELECT transactions.username, SUM(transactions.pay) AS transaksi FROM transactions GROUP BY transactions.username) transactions ON bills.username = transactions.username GROUP BY bills.username; FIX 2
         //SELECT bills.username,bills.bill_id, payments.payment_name, bills.bill_amount,transaksi FROM bills INNER JOIN payments ON bills.payment_id=payments.payment_id LEFT JOIN (SELECT transactions.bill_id, SUM(transactions.pay) AS transaksi FROM transactions GROUP BY transactions.bill_id) transactions ON bills.bill_id = transactions.bill_id WHERE bills.username = "user1";Detail Transkasi
         return view('dashboard.transaction.index', [
+            'set_active' => 'transaction',
             'transactions' => $transactions,
         ]);
     }

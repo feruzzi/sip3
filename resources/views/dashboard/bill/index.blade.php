@@ -35,7 +35,7 @@
                 </div>
                 <div class="card-content">
                     <div class="table-responsive m-3">
-                        <table class="table table-hover table-bordered mb-0" id="tb_bill">
+                        <table class="table table-hover table-bordered mb-0" id="tables">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -51,8 +51,10 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $bill->name }}</td>
                                         <td>{{ $bill->tagihan . ' Tagihan' }}</td>
-                                        <td class="font-extrabold text-danger">
-                                            {{ 'Rp ' . number_format($bill->total_bill, 2, ',', '.') }}</td>
+                                        <td>
+                                            <span
+                                                class="font-extrabold badge bg-light-danger">{{ 'Rp ' . number_format($bill->total_bill, 2, ',', '.') }}</span>
+                                        </td>
                                         <td class="d-flex justify-content-start align-items-center">
                                             <a class="btn btn-sm btn-outline-primary" href="#"><i
                                                     class="icon dripicons dripicons-plus text-primary"></i></a>

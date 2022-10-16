@@ -92,16 +92,18 @@
                                 <span>Tagihan</span>
                             </a>
                         </li>
-                        <li class="sidebar-item  has-sub">
+                        <li
+                            class="sidebar-item {{ $set_active == 'transaction' || $set_active == 'det_transaction' ? 'active' : '' }} has-sub">
                             <a href="#" class='sidebar-link'>
                                 <i class="icon dripicons dripicons-checklist"></i>
                                 <span>Detail Pembayaran</span>
                             </a>
-                            <ul class="submenu ">
-                                <li class="submenu-item ">
+                            <ul
+                                class="submenu {{ $set_active == 'transaction' || $set_active == 'det_transaction' ? 'd-block' : '' }}">
+                                <li class="submenu-item {{ $set_active == 'transaction' ? 'active' : '' }}">
                                     <a href="{{ url('transaction') }}">Transaksi</a>
                                 </li>
-                                <li class="submenu-item ">
+                                <li class="submenu-item {{ $set_active == 'det_transaction' ? 'active' : '' }}">
                                     <a href="{{ url('detail-transaction') }}">Detail Transaksi</a>
                                 </li>
                                 <li class="submenu-item ">

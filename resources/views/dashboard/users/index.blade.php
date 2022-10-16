@@ -46,11 +46,16 @@
                                         <td>{{ $user->username }}</td>
                                         <td>{{ $user->group1 }}</td>
                                         <td>{{ $user->group2 }}</td>
-                                        <td class="font-extrabold {{ $user->level == 1 ? 'text-danger' : '' }}">
-                                            {{ $user->level == 1 ? 'Administator' : 'Pengguna' }}</td>
-                                        <td
-                                            class="font-extrabold {{ $user->status == 1 ? 'text-success' : 'text-warning' }}">
-                                            {{ $user->status == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>
+                                        <td>
+                                            <span
+                                                class="font-extrabold mx-3 {{ $user->level == 1 ? 'badge bg-light-danger' : 'badge bg-light-secondary' }}">{{ $user->level == 1 ? 'Administator' : 'Pengguna' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="font-extrabold {{ $user->status == 1 ? 'badge bg-light-success' : 'badge bg-light-warning' }}">{{ $user->status == 1 ? 'Aktif' : 'Tidak Aktif' }}
+                                            </span>
+                                        </td>
                                         <td class="d-flex justify-content-start align-items-center">
                                             <a class="btn btn-sm btn-outline-danger" href="#"><i
                                                     class="icon dripicons dripicons-trash text-danger"></i></a>

@@ -1,5 +1,5 @@
 let dataTable = new simpleDatatables.DataTable(
-    document.getElementById("tb_payment")
+    document.getElementById("tables")
 );
 // Move "per page dropdown" selector element out of label
 // to make it work with bootstrap 5. Add bs5 classes.

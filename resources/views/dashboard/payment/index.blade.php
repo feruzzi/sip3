@@ -35,7 +35,7 @@
                 </div>
                 <div class="card-content">
                     <div class="table-responsive m-3">
-                        <table class="table table-hover table-bordered mb-0" id="tb_payment">
+                        <table class="table table-hover table-bordered mb-0" id="tables">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -53,9 +53,11 @@
                                         <td>{{ $payment->payment_id }}</td>
                                         <td>{{ $payment->payment_name }}</td>
                                         <td>{{ 'Rp ' . number_format($payment->payment_amount, 2, ',', '.') }}</td>
-                                        <td
-                                            class="font-extrabold {{ $payment->payment_status == 1 ? 'text-success' : 'text-warning' }}">
-                                            {{ $payment->payment_status == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>
+                                        <td>
+                                            <span
+                                                class="font-extrabold {{ $payment->payment_status == 1 ? 'badge bg-light-success' : 'badge bg-light-warning' }}">{{ $payment->payment_status == 1 ? 'Aktif' : 'Tidak Aktif' }}
+                                            </span>
+                                        </td>
                                         <td class="d-flex justify-content-start align-items-center">
                                             <a class="btn btn-sm btn-outline-danger" href="#"><i
                                                     class="icon dripicons dripicons-trash text-danger"></i></a>
