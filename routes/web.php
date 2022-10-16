@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -17,11 +18,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
+// Route::get('/info/transaction', function () {
+//     return view('transaction');
+// });
 // Route::get('/payment', function () {
 //     return view('dashboard.payment.add');
 // });
+Route::get('info/bill', [PageController::class, 'info_bill']);
+Route::get('info/transaction', [PageController::class, 'info_transaction']);
 Route::get('payment', [PaymentController::class, 'index']);
 Route::get('payment/add', [PaymentController::class, 'store']);
 Route::get('bill', [BillController::class, 'index']);
