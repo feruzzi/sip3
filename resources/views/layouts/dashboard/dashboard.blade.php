@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/pages/dripicons.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/shared/iconly.css') }}">
 
-
+    @stack('header-js')
 </head>
 
 <body>
@@ -24,8 +24,10 @@
                 <div class="sidebar-header position-relative">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="logo">
-                            <a href="index.html"><img src="{{ asset('assets/images/logo/logo.svg') }}" alt="Logo"
-                                    srcset=""></a>
+                            <a href="#">
+                                <h5>SIP</h5>
+                                <small>Dashboard</small>
+                            </a>
                         </div>
                         <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -66,25 +68,25 @@
                     <ul class="menu">
                         <li class="sidebar-title">Menu</li>
 
-                        <li class="sidebar-item">
+                        <li class="sidebar-item {{ $set_active == 'dashboard' ? 'active' : '' }}">
                             <a href="{{ url('dashboard') }}" class='sidebar-link'>
                                 <i class="bi bi-grid-fill"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
+                        <li class="sidebar-item {{ $set_active == 'users' ? 'active' : '' }}">
                             <a href="{{ url('users') }}" class='sidebar-link'>
                                 <i class="icon dripicons dripicons-user-group"></i>
                                 <span>Users</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
+                        <li class="sidebar-item {{ $set_active == 'payment' ? 'active' : '' }}">
                             <a href="{{ url('payment') }}" class='sidebar-link'>
                                 <i class="icon dripicons dripicons-stack"></i>
                                 <span>Pembayaran</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
+                        <li class="sidebar-item {{ $set_active == 'bill' ? 'active' : '' }}">
                             <a href="{{ url('bill') }}" class='sidebar-link'>
                                 <i class="icon dripicons dripicons-article"></i>
                                 <span>Tagihan</span>
@@ -137,7 +139,7 @@
     </div>
     <script src="{{ asset('assets/js/bootstrap.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
-
+    @stack('footer-js')
 </body>
 
 </html>

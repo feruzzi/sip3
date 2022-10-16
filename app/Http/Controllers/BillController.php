@@ -18,10 +18,12 @@ class BillController extends Controller
     public function index()
     {
         $bills = DB::table('bills')
-            ->select(DB::raw('bills.username,users.name,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
+            ->select(DB::raw('bills.username,users.name,SUM(bills.bill_amount) total_bill,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
             ->groupBy('bills.username')
             ->get();
+        // dd($bills);
         return view('dashboard.bill.index', [
+            'set_active' => 'bill',
             'payments' => Payment::where('payment_status', 1)->get(),
             'bills' => $bills
         ]);

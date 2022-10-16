@@ -1,23 +1,15 @@
 @extends('layouts.dashboard.dashboard')
-@push('header-js')
-    <link rel="stylesheet" href="{{ asset('assets/extensions/simple-datatables/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/pages/simple-datatables.css') }}">
-@endpush
-@push('footer-js')
-    <script src="{{ asset('assets/extensions/simple-datatables/umd/simple-datatables.js') }}"></script>
-    <script src="{{ asset('assets/js/pages/simple-datatables.js') }}"></script>
-@endpush
 @section('content')
     <div class="page-title">
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Pembayaran</h3>
-                <p class="text-subtitle text-muted">Informasi Data Pembayaran</p>
+                <h3>Users</h3>
+                <p class="text-subtitle text-muted">Informasi User</p>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ url('payment') }}">Pembayaran</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url('users') }}">Users</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                     </ol>
                 </nav>
@@ -27,44 +19,47 @@
     <section class="section">
         <div class="col-12">
             <div class="d-flex mb-3">
-                <a class="ms-auto btn btn-primary">Tambah Pembayaran Baru</a>
+                <a class="ms-auto btn btn-primary">Tambah User Baru</a>
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Tabel Pembayaran</h4>
+                    <h4 class="card-title">Tabel Users</h4>
                 </div>
                 <div class="card-content">
                     <div class="table-responsive m-3">
-                        <table class="table table-hover table-bordered mb-0" id="tb_payment">
+                        <table class="table table-hover table-bordered mb-0">
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>ID Pembayaran</th>
-                                    <th>Pembayaran</th>
-                                    <th>Nominal</th>
+                                    <th>Username</th>
+                                    <th>Angkatan</th>
+                                    <th>Jurusan</th>
+                                    <th>Level</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($payments as $payment)
+                                @foreach ($users as $user)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $payment->payment_id }}</td>
-                                        <td>{{ $payment->payment_name }}</td>
-                                        <td>{{ 'Rp ' . number_format($payment->payment_amount, 2, ',', '.') }}</td>
+                                        <td>{{ $user->username }}</td>
+                                        <td>{{ $user->group1 }}</td>
+                                        <td>{{ $user->group2 }}</td>
+                                        <td class="font-extrabold {{ $user->level == 1 ? 'text-danger' : '' }}">
+                                            {{ $user->level == 1 ? 'Administator' : 'Pengguna' }}</td>
                                         <td
-                                            class="font-extrabold {{ $payment->payment_status == 1 ? 'text-success' : 'text-warning' }}">
-                                            {{ $payment->payment_status == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>
+                                            class="font-extrabold {{ $user->status == 1 ? 'text-success' : 'text-warning' }}">
+                                            {{ $user->status == 1 ? 'Aktif' : 'Tidak Aktif' }}</td>
                                         <td class="d-flex justify-content-start align-items-center">
                                             <a class="btn btn-sm btn-outline-danger" href="#"><i
                                                     class="icon dripicons dripicons-trash text-danger"></i></a>
                                             <a class="btn btn-sm btn-outline-warning mx-2" href="#"><i
                                                     class="icon dripicons dripicons-document-edit text-warning"></i></a>
-                                            @if ($payment->payment_status == 1)
+                                            @if ($user->status == 1)
                                                 <a class="btn btn-sm btn-outline-danger" href="#"><i
                                                         class="icon dripicons dripicons-wrong text-danger"></i></a>
-                                            @elseif($payment->payment_status == 0)
+                                            @elseif($user->status == 0)
                                                 <a class="btn btn-sm btn-outline-success" href="#"><i
                                                         class="icon dripicons dripicons-checkmark text-success"></i></a>
                                             @endif

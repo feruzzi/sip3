@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payment;
-use App\Models\Bills;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class PaymentController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,15 +14,10 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        // dd(Payment::all());
-        // $bills = DB::table('bills')
-        //     ->select(DB::raw('bills.username,users.name,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
-        //     ->groupBy('bills.username')
-        //     ->get();
-        $payments = Payment::all();
-        return view('dashboard.payment.index', [
-            'set_active' => 'payment',
-            'payments' => $payments
+        $users = User::all();
+        return view('dashboard.users.index', [
+            'set_active' => 'users',
+            'users' => $users
         ]);
     }
 
@@ -46,21 +39,16 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        Payment::create([
-            'payment_id' => $request->payment_id,
-            'payment_name' => $request->payment_name,
-            'payment_amount' => $request->payment_amount,
-            'payment_status' => $request->payment_status
-        ]);
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Payment  $payment
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(Payment $payment)
+    public function show(User $user)
     {
         //
     }
@@ -68,10 +56,10 @@ class PaymentController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Payment  $payment
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(Payment $payment)
+    public function edit(User $user)
     {
         //
     }
@@ -80,10 +68,10 @@ class PaymentController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Payment  $payment
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Payment $payment)
+    public function update(Request $request, User $user)
     {
         //
     }
@@ -91,10 +79,10 @@ class PaymentController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Payment  $payment
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Payment $payment)
+    public function destroy(User $user)
     {
         //
     }

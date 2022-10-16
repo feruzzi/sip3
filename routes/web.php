@@ -4,6 +4,7 @@ use App\Http\Controllers\BillController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,6 +35,7 @@ Route::get('info/bill', [PageController::class, 'info_bill']);
 Route::get('info/transaction', [PageController::class, 'info_transaction']);
 Route::get('change-password', [PageController::class, 'change_password']);
 Route::get('dashboard', [PageController::class, 'dashboard']);
+Route::get('users', [UserController::class, 'index']);
 Route::get('payment', [PaymentController::class, 'index']);
 Route::get('payment/add', [PaymentController::class, 'store']);
 Route::get('bill', [BillController::class, 'index']);
