@@ -2,121 +2,80 @@
 @push('header-js')
     <link rel="stylesheet" href="{{ asset('assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/pages/datatables.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/extensions/toastify-js/src/toastify.css') }}">
 @endpush
 @push('footer-js')
     <script src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
-    <script src="{{ asset('assets/js/toast.js') }}"></script>
-    <script>
+    {{-- <script src="{{ asset('assets/extensions/simple-datatables/umd/simple-datatables.js') }}"></script> --}}
+    <script src="{{ asset('assets/js/pages/datatables.js') }}"></script>
+    {{-- <script>
         $(document).ready(function() {
             let tb_payment = $("#tb_payment").DataTable({
                 processing: true,
                 serverside: true,
-                autoWidth: false,
-                ajax: "{{ url('payment/data') }}",
+                ajax: "{{ url('payment/ajax') }}",
                 dataSrc: '',
                 columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
+                        data: 'payment_id'
                     },
                     {
-                        data: 'payment_id',
+                        data: 'payment_name'
                     },
-                    {
-                        data: 'payment_name',
-                    },
-                    {
-                        data: 'amount'
-                    },
-                    {
-                        data: 'status',
-                    },
-                    {
-                        data: 'action',
-                    }
                 ],
             });
         });
-    </script>
+    </script> --}}
     <script>
-        $(document).ready(function() {
-            $(document).on("click", ".add-payment", function(e) {
-                $('#payment-modal').modal('show');
-                $(document).off('click', '.save-payment').on('click', '.save-payment', function() {
-                    createUpdate();
-                });
+        $(document).on('click', ".add-payment", function() {
+            createUpdate();
+        });
+        $(document).on('click', ".delete-payment", function() {
+            var id = $(this).data('id');
+            console.log(id)
+            $.ajax({
+                url: 'payment/delete/' + id,
+                type: 'DELETE',
+                success: function(response) {
+                    console.log(response);
+                    // $("#tb_payment").load(location.href + " #tb_payment");
+                    $("#tb_payment").load(" #tb_payment");
+
+                }
             });
-            $(document).on("click", ".delete-payment", function(e) {
-                var id = $(this).data('id');
-                $('#modal-delete').modal('show');
-                $(document).off('click', '.delete-data').on('click', '.delete-data', function() {
-                    console.log(id)
-                    $.ajax({
-                        url: 'payment/delete/' + id,
-                        type: 'DELETE',
-                        success: function(response) {
-                            $("#tb_payment").DataTable().ajax.reload(null, false);
-                            $('#modal-delete').modal('hide');
-                            toastSuccess(response.msg)
-                        }
+        });
+        $(document).on('click', ".edit-payment", function() {
+            $('.modal-header #modal-payment-title').text('Edit Pembayaran');
+            var id = $(this).data('id');
+            console.log("edit " + id)
+            $.ajax({
+                url: 'payment/' + id + '/edit',
+                type: 'GET',
+                success: function(response) {
+                    console.log(response.result);
+                    $('#payment-modal').modal('show');
+                    $('#payment_id').val(response.result.payment_id);
+                    $('#payment_name').val(response.result.payment_name);
+                    $('#payment_amount').val(response.result.payment_amount);
+                    $('.add-payment').click(function() {
+                        createUpdate(id);
                     });
-                });
-            });
-            // $(document).on('click', ".delete-payment", function() {
-            //     var id = $(this).data('id');
-            //     console.log(id)
-            //     $.ajax({
-            //         url: 'payment/delete/' + id,
-            //         type: 'DELETE',
-            //         success: function(response) {
-            //             $("#tb_payment").DataTable().ajax.reload(null, false);
-            //         }
-            //     });
-            // });
-            $(document).on('click', ".edit-payment", function(e) {
-                var id = $(this).data('id');
-                $.ajax({
-                    url: 'payment/' + id + '/edit',
-                    type: 'GET',
-                    success: function(response) {
-                        $('.modal-header #modal-payment-title').text('Edit Pembayaran');
-                        console.log(response.result);
-                        $('#payment-modal').modal('show');
-                        $('#payment_id').val(response.result.payment_id);
-                        $('#payment_name').val(response.result.payment_name);
-                        $('#payment_amount').val(response.result.payment_amount);
-                        $(document).off('click', '.save-payment').on('click', '.save-payment',
-                            function() {
-                                createUpdate(id);
-                            });
-                    }
-                });
-            });
-            $(document).on('click', ".set-payment", function(e) {
-                var id = $(this).data('id');
-                $.ajax({
-                    url: 'payment/set/' + id,
-                    type: "PUT",
-                    data: {
-                        payment_id: $('#payment_id').val()
-                    },
-                    success: function(response) {
-                        $("#tb_payment").DataTable().ajax.reload(null, false);
-                        toastSuccess(response.msg)
-                    }
-                });
+                    // $("#tb_payment").load(" #tb_payment");
+                }
             });
         });
     </script>
     <script>
         function createUpdate(id = '') {
-            if (id == '') {
+            if (id === '') {
                 var type_ = "POST";
                 var url_ = 'payment/add';
             } else {
                 var type_ = "PUT";
                 var url_ = 'payment/' + id;
             }
+            // let payment_id = $('#payment_id').val();
+            // let payment_name = $('#payment_name').val();
+            // let payment_amount = $('#payment_amount').val();
+            // console.log("id - " + id)
             $.ajax({
                 url: url_,
                 type: type_,
@@ -126,26 +85,13 @@
                     payment_amount: $('#payment_amount').val()
                 },
                 success: function(response) {
-                    if (response.errors) {
-                        $('.alert-light-danger').removeClass('d-none');
-                        $('.alert-light-danger').html("<ul>");
-                        $.each(response.errors, function(key, value) {
-                            $('.alert-light-danger').find('ul').append("<li>" + value +
-                                "</li>");
-                        });
-                        $('.alert-light-danger').append("</ul>");
-                        toastError(response.msg)
-                    } else {
-                        $("#tb_payment").DataTable().ajax.reload();
-                        $('#payment-modal').modal('hide');
-                        toastSuccess(response.msg)
-                    }
+                    // console.log(response);
+                    // $("#tb_payment").load(location.href + " #tb_payment");
+                    $("#tb_payment").load(" #tb_payment");
                 }
             });
         }
     </script>
-    <script src="{{ asset('assets/extensions/toastify-js/src/toastify.js') }}"></script>
-    {{-- <script src="{{ asset('assets/js/pages/toastify.js') }}"></script> --}}
 @endpush
 @section('content')
     <div class="page-title">
@@ -167,7 +113,7 @@
     <section class="section">
         <div class="col-12">
             <div class="d-flex mb-3">
-                <a class="ms-auto btn btn-primary add-payment">Tambah
+                <a class="ms-auto btn btn-primary" data-bs-toggle="modal" data-bs-target="#payment-modal">Tambah
                     Pembayaran Baru</a>
             </div>
             <div class="card">
@@ -187,7 +133,7 @@
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
-                            {{-- <tbody>
+                            <tbody>
                                 @foreach ($payments as $payment)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
@@ -216,7 +162,7 @@
                                         </td>
                                     </tr>
                                 @endforeach
-                            </tbody> --}}
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -234,7 +180,6 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-light-danger color-danger d-none"></div>
                     <div class="col-sm-12">
                         <div class="form-group">
                             <label for="payment_id">ID Pembayaran</label>
@@ -263,7 +208,7 @@
                         <i class="bx bx-x d-block d-sm-none"></i>
                         <span class="d-none d-sm-block">Tutup</span>
                     </button>
-                    <button type="button" class="btn btn-primary ml-1 save-payment">
+                    <button type="button" class="btn btn-primary ml-1 add-payment" data-bs-dismiss="modal">
                         <i class="bx bx-check d-block d-sm-none"></i>
                         <span class="d-none d-sm-block">Simpan</span>
                     </button>
@@ -271,5 +216,4 @@
             </div>
         </div>
     </div>
-    @include('layouts.components.delete-modal')
 @endsection

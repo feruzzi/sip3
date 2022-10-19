@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - Sistem Informasi Pembayaran</title>
 
     <link rel="stylesheet" href="{{ asset('assets/css/main/app.css') }}">
@@ -13,6 +14,7 @@
     <link rel="stylesheet" href="{{ asset('assets/extensions/@icon/dripicons/dripicons.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/pages/dripicons.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/shared/iconly.css') }}">
+
 
     @stack('header-js')
 </head>
@@ -74,12 +76,28 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
-                        <li class="sidebar-item {{ $set_active == 'users' ? 'active' : '' }}">
+                        <li
+                            class="sidebar-item {{ $set_active == 'users' || $set_active == 'user_group' ? 'active' : '' }} has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="icon dripicons dripicons-user-group"></i>
+                                <span>Users</span>
+                            </a>
+                            <ul
+                                class="submenu {{ $set_active == 'users' || $set_active == 'user_group' ? 'd-block' : '' }}">
+                                <li class="submenu-item {{ $set_active == 'user_group' ? 'active' : '' }}">
+                                    <a href="{{ url('user-group') }}">Tahun Dan Jurusan</a>
+                                </li>
+                                <li class="submenu-item {{ $set_active == 'users' ? 'active' : '' }}">
+                                    <a href="{{ url('users') }}">Kelola Users</a>
+                                </li>
+                            </ul>
+                        </li>
+                        {{-- <li class="sidebar-item {{ $set_active == 'users' ? 'active' : '' }}">
                             <a href="{{ url('users') }}" class='sidebar-link'>
                                 <i class="icon dripicons dripicons-user-group"></i>
                                 <span>Users</span>
                             </a>
-                        </li>
+                        </li> --}}
                         <li class="sidebar-item {{ $set_active == 'payment' ? 'active' : '' }}">
                             <a href="{{ url('payment') }}" class='sidebar-link'>
                                 <i class="icon dripicons dripicons-stack"></i>
@@ -139,8 +157,17 @@
             </footer>
         </div>
     </div>
+    <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script> --}}
     <script src="{{ asset('assets/js/bootstrap.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
     @stack('footer-js')
 </body>
 

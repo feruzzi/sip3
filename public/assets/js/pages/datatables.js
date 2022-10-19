@@ -1,1 +1,5 @@
-let jquery_datatable = $("#table1").DataTable();
+$(document).ready(function () {
+    let tb_payment = $("#tb_payment").DataTable({
+        serverside: true,
+    });
+});
