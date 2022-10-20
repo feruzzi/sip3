@@ -7,6 +7,10 @@ use App\Models\User;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
+
 
 class BillController extends Controller
 {
@@ -17,16 +21,32 @@ class BillController extends Controller
      */
     public function index()
     {
-        $bills = DB::table('bills')
-            ->select(DB::raw('bills.username,users.name,SUM(bills.bill_amount) total_bill,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
-            ->groupBy('bills.username')
-            ->get();
+        // $bills = DB::table('bills')
+        //     ->select(DB::raw('bills.username,users.name,SUM(bills.bill_amount) total_bill,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
+        //     ->groupBy('bills.username')
+        //     ->get();
         // dd($bills);
         return view('dashboard.bill.index', [
             'set_active' => 'bill',
             'payments' => Payment::where('payment_status', 1)->get(),
-            'bills' => $bills
+            // 'bills' => $bills
         ]);
+    }
+    public function ajax_view()
+    {
+        $bills = DB::table('bills')
+            ->select(DB::raw('bills.username,users.name,SUM(bills.bill_amount) total_bill,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
+            ->groupBy('bills.username')
+            ->get();
+        return Datatables::of($bills)
+            ->addIndexColumn()
+            ->addColumn('total_bill', function ($bills) {
+                return view('dashboard.bill.style-total-bills')->with('bill', $bills);
+            })
+            ->addColumn('action', function ($bills) {
+                return view('dashboard.bill.action-buttons')->with('bill', $bills);
+            })
+            ->make(true);
     }
 
     /**
@@ -47,32 +67,44 @@ class BillController extends Controller
      */
     public function store(Request $request)
     {
-        //Tambah tagihan target username
+        // return response()->json($request);
+        // Tambah tagihan target username
+        $prefix = "TG" . date('y') . "-";
+        $bill_id = IdGenerator::generate(['table' => 'bills', 'field' => 'bill_id', 'length' => 11, 'prefix' => $prefix, 'reset_on_prefix_change' => true]);
+        //output: TG2022-00001        
         Bill::create([
             'username' => $request->username,
-            'bill_id' => "random", //random,
-            'payment_id' => $request->payment,
+            'bill_id' => $bill_id, //random,
+            'payment_id' => $request->payment_id,
             'date' => date("Y-m-d"), //date_now(),
             'bill_amount' => $request->bill_amount
         ]);
+        return response()->json(['msg' => "Tagihan $request->username Berhasil ditambahkan"]);
     }
     public function mass_store(Request $request)
     {
+        // return response()->json([$request->group1, $request->group2, $request->payment_id]);
+
         // dd($request->payment);
         $username = User::where([
             'group1' => $request->group1,
             'group2' => $request->group2
         ])->pluck('username');
-        $amount = Payment::where('payment_id', $request->payment)->value('payment_amount');
+        // return response()->json($username);
+        $amount = Payment::where('payment_id', $request->payment_id)->value('payment_amount');
+        // return response()->json($amount);
+        $prefix = "TG" . date('y') . "-";
         foreach ($username as $x => $user) {
+            $bill_id = IdGenerator::generate(['table' => 'bills', 'field' => 'bill_id', 'length' => 11, 'prefix' => $prefix, 'reset_on_prefix_change' => true]);
             Bill::create([
                 'username' => $user,
-                'bill_id' => "bl" . $user . "3", //ganti ke random genareate
-                'payment_id' => $request->payment,
+                'bill_id' => $bill_id, //ganti ke random genareate
+                'payment_id' => $request->payment_id,
                 'date' => date("Y-m-d"),
                 'bill_amount' => $amount,
             ]);
         }
+        return response()->json(['msg' => "Tagihan $request->payment_id Berhasil ditambahkan"]);
     }
 
     /**
@@ -81,11 +113,18 @@ class BillController extends Controller
      * @param  \App\Models\Bill  $bill
      * @return \Illuminate\Http\Response
      */
-    public function show(Bill $bill)
+    public function show(Bill $bill, $id)
     {
-        //SELECT payments.payment_name,bills.bill_amount FROM bills INNER JOIN payments ON bills.payment_id = payments.payment_id WHERE bills.username="user2";
+        $details = DB::table('bills')->select('bill_id', 'payments.payment_name', 'bills.bill_amount')->join('payments', 'bills.payment_id', '=', 'payments.payment_id')->where('bills.username', $id)->get();
+        return response()->json($details);
+        // return Datatables::of($details)->make(true);
+        // SELECT payments.payment_name,bills.bill_amount FROM bills INNER JOIN payments ON bills.payment_id = payments.payment_id WHERE bills.username="user2";
     }
-
+    public function show_info($id)
+    {
+        $infos = DB::table('bills')->select('users.username', 'users.name')->join('users', 'bills.username', '=', 'users.username')->where('bills.username', $id)->first();
+        return response()->json($infos);
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -115,8 +154,11 @@ class BillController extends Controller
      * @param  \App\Models\Bill  $bill
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Bill $bill)
+    public function destroy(Bill $bill, Request $request)
     {
-        //
+        foreach ($request->bill_id as $bill) {
+            Bill::where('bill_id', $bill)->delete();
+        }
+        return response()->json(['msg' => "Tagihan Berhasil Dihapus"]);
     }
 }
