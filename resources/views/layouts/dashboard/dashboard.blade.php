@@ -161,6 +161,7 @@
     {{-- <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script> --}}
     <script src="{{ asset('assets/js/bootstrap.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
+    <script src="{{ asset('assets/extensions\autonumeric\autoNumeric.js') }}"></script>
     <script>
         $.ajaxSetup({
             headers: {

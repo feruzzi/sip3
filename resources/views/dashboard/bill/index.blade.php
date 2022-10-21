@@ -74,14 +74,27 @@
                                 type: "POST",
                                 data: {
                                     username: $('#username').val(),
-                                    payment_id: $('#payment_id').val(),
-                                    bill_amount: $('#bill_amount').val(),
+                                    payment_id: $('#payment_id_2').val(),
+                                    bill_amount: $('#bill_amount').autoNumeric('get'),
                                 },
                                 success: function(response) {
-                                    console.log(response);
-                                    $("#tb_bill").DataTable().ajax.reload();
-                                    $('#add-bill-modal').modal('hide');
-                                    toastSuccess(response.msg)
+                                    if (response.errors) {
+                                        $('.alert-light-danger').removeClass('d-none');
+                                        $('.alert-light-danger').html("<ul>");
+                                        $.each(response.errors, function(key, value) {
+                                            $('.alert-light-danger').find('ul')
+                                                .append("<li>" + value +
+                                                    "</li>");
+                                        });
+                                        $('.alert-light-danger').append("</ul>");
+                                        toastError(response.msg)
+                                    } else {
+                                        console.log(response);
+                                        $('.alert-light-danger').addClass('d-none');
+                                        $("#tb_bill").DataTable().ajax.reload();
+                                        $('#add-bill-modal').modal('hide');
+                                        toastSuccess(response.msg)
+                                    }
                                 }
                             });
                         });
@@ -126,6 +139,56 @@
                             }
                         });
                     });
+                }
+            });
+        });
+        $(document).on("click", ".edit-bill", function(e) {
+            $(".list-bill").remove();
+            $('#edit-bill-modal').modal('show');
+            var id = $(this).data('id');
+            alert(id);
+            $.ajax({
+                url: "bill/detail/" + id,
+                type: "GET",
+                success: function(response) {
+                    console.log(response);
+                    $.each(response, function(key, value) {
+                        $(".list-edit-bill").append(
+                            "<div class='form-group list-bill'><label for='" +
+                            value.bill_id + "'>" + value.payment_name +
+                            "</label><input type='text' data-bill='" + value.bill_id +
+                            "' name='bill_amount_2' id='bill_amount_2' class='form-control round amount_format' placeholder='Nominal Pembayaran' value='" +
+                            value.bill_amount + "'></div>"
+                        );
+                    });
+                    $('.amount_format').autoNumeric('init', {
+                        aSep: ".",
+                        aDec: ",",
+                        mDec: "0",
+                    });
+                    $(document).off('click', '.update-bill').on('click', '.update-bill', function() {
+                        // var bill_id = $("#bill_amount_2").serialize();
+                        var data_bill = [];
+                        $('input[name="bill_amount_2"]').each(function() {
+                            data_bill.push({
+                                bill_id: $(this).data('bill'),
+                                bill_amount: $(this).autoNumeric('get'),
+                            });
+                        });
+                        $.ajax({
+                            url: "bill/update/" + id,
+                            type: "POST",
+                            data: {
+                                data_bill: data_bill,
+                            },
+                            success: function(response) {
+                                console.log(response);
+                                $("#tb_bill").DataTable().ajax.reload();
+                                $('#edit-bill-modal').modal('hide');
+                                toastSuccess(response.msg)
+                            }
+                        });
+                    })
                 }
             });
         });
@@ -292,7 +355,7 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-info">
-                    <h5 class="modal-title white" id="myModalLabel130">Info Modal
+                    <h5 class="modal-title white" id="myModalLabel130">Detail Tagihan
                     </h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <i data-feather="x"></i>
@@ -338,6 +401,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div class="alert alert-light-danger color-danger d-none"></div>
                     <div class="col-sm-12">
                         <div class="form-group">
                             <label for="username">Username</label>
@@ -351,8 +415,8 @@
                         </div>
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label for="payment_id">Pembayaran</label>
-                                <select id="payment_id" name="payment_id" class="form-select">
+                                <label for="payment_id_2">Pembayaran</label>
+                                <select id="payment_id_2" name="payment_id_2" class="form-select">
                                     @foreach ($payments as $payment)
                                         <option value="{{ $payment->payment_id }}">{{ $payment->payment_name }}</option>
                                     @endforeach
@@ -361,8 +425,8 @@
                         </div>
                         <div class="form-group">
                             <label for="bill_amount">Nominal Pembayaran</label>
-                            <input type="text" id="bill_amount" name="bill_amount" class="form-control round"
-                                placeholder="Nominal Pembayaran">
+                            <input type="text" id="bill_amount" name="bill_amount"
+                                class="form-control round amount_format" placeholder="Nominal Pembayaran">
                         </div>
                     </div>
                 </div>
@@ -413,9 +477,39 @@
                         <i class="bx bx-x d-block d-sm-none"></i>
                         <span class="d-none d-sm-block">Tutup</span>
                     </button>
-                    <button type="button" class="btn btn-danger ml-1">
+                    <button type="button" class="btn btn-danger ml-1 destroy-bill">
                         <i class="bx bx-check d-block d-sm-none"></i>
-                        <span class="d-none d-sm-block destroy-bill">Hapus</span>
+                        <span class="d-none d-sm-block">Hapus</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade text-left" id="edit-bill-modal" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel140" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title white" id="myModalLabel140">Edit Tagihan
+                    </h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <i data-feather="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-edit-bill">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                        <i class="bx bx-x d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Tutup</span>
+                    </button>
+
+                    <button type="button" class="btn btn-warning ml-1 update-bill">
+                        <i class="bx bx-check d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Simpan</span>
                     </button>
                 </div>
             </div>

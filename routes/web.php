@@ -50,4 +50,5 @@ Route::get('bill/detail/{id}', [BillController::class, 'show']);
 Route::post('bill/add', [BillController::class, 'store']);
 Route::post('bill/mass_add', [BillController::class, 'mass_store']);
 Route::post('bill/delete/', [BillController::class, 'destroy']);
+Route::post('bill/update/{id}', [BillController::class, 'update']);
 Route::get('transaction', [TransactionController::class, 'index']);

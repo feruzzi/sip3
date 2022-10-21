@@ -69,17 +69,29 @@ class BillController extends Controller
     {
         // return response()->json($request);
         // Tambah tagihan target username
-        $prefix = "TG" . date('y') . "-";
-        $bill_id = IdGenerator::generate(['table' => 'bills', 'field' => 'bill_id', 'length' => 11, 'prefix' => $prefix, 'reset_on_prefix_change' => true]);
-        //output: TG2022-00001        
-        Bill::create([
-            'username' => $request->username,
-            'bill_id' => $bill_id, //random,
-            'payment_id' => $request->payment_id,
-            'date' => date("Y-m-d"), //date_now(),
-            'bill_amount' => $request->bill_amount
+        // $bill = ['amount' => str_replace(".", "", $request->bill_amount)];
+        $validate = Validator::make($request->all(), [
+            'bill_amount' => 'required|numeric',
+        ], [
+            'bill_amount.required' => 'Nominal Pembayaran Wajib Diisi',
+            'bill_amount.numeric' => 'Nominal Pembayaran Harus Berupa Angka',
         ]);
-        return response()->json(['msg' => "Tagihan $request->username Berhasil ditambahkan"]);
+        if ($validate->fails()) {
+            return response()->json(['msg' => "Pembayaran Gagal Ditambahkan", 'errors' => $validate->errors()]);
+        } else {
+            $prefix = "TG" . date('y') . "-";
+            $bill_id = IdGenerator::generate(['table' => 'bills', 'field' => 'bill_id', 'length' => 11, 'prefix' => $prefix, 'reset_on_prefix_change' => true]);
+            //output: TG2022-00001        
+            // $bill_amount = str_replace(".", "", $request->bill_amount);
+            Bill::create([
+                'username' => $request->username,
+                'bill_id' => $bill_id, //random,
+                'payment_id' => $request->payment_id,
+                'date' => date("Y-m-d"), //date_now(),
+                'bill_amount' => $request->bill_amount
+            ]);
+            return response()->json(['msg' => "Tagihan $request->username Berhasil ditambahkan"]);
+        }
     }
     public function mass_store(Request $request)
     {
@@ -143,9 +155,16 @@ class BillController extends Controller
      * @param  \App\Models\Bill  $bill
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Bill $bill)
+    public function update(Request $request, Bill $bill, $id)
     {
-        //
+        // $x = [];
+        foreach ($request->data_bill as $bill) {
+            Bill::where('bill_id', $bill['bill_id'])->update([
+                'bill_amount' => $bill['bill_amount'],
+            ]);
+        }
+        // return response()->json($x);
+        return response()->json(['msg' => "Tagihan Berhasil Diperbarui"]);
     }
 
     /**
