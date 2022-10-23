@@ -9,7 +9,7 @@
                     <i data-feather="x"></i>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body delete-message">
                 Data yang dihapus akan hilang dari Database
             </div>
             <div class="modal-footer">

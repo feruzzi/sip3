@@ -317,7 +317,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="payment_name">Jurusan</label>
+                                <label for="group2">Jurusan</label>
                                 <select id="group2" name="group2" class="form-select">
                                     <option value="IPA 1">IPA 1</option>
                                     <option value="IPA 2">IPA 2</option>
