@@ -111,23 +111,27 @@
                             </a>
                         </li>
                         <li
-                            class="sidebar-item {{ $set_active == 'transaction' || $set_active == 'det_transaction' ? 'active' : '' }} has-sub">
+                            class="sidebar-item {{ $set_active == 'transaction' || $set_active == 'detail_transaction' ? 'active' : '' }} has-sub">
                             <a href="#" class='sidebar-link'>
                                 <i class="icon dripicons dripicons-checklist"></i>
                                 <span>Detail Pembayaran</span>
                             </a>
                             <ul
-                                class="submenu {{ $set_active == 'transaction' || $set_active == 'det_transaction' ? 'd-block' : '' }}">
+                                class="submenu {{ $set_active == 'transaction' || $set_active == 'detail_transaction' ? 'd-block' : '' }}">
                                 <li class="submenu-item {{ $set_active == 'transaction' ? 'active' : '' }}">
                                     <a href="{{ url('transaction') }}">Transaksi</a>
                                 </li>
-                                <li class="submenu-item {{ $set_active == 'det_transaction' ? 'active' : '' }}">
+                                <li class="submenu-item {{ $set_active == 'detail_transaction' ? 'active' : '' }}">
                                     <a href="{{ url('detail-transaction') }}">Detail Transaksi</a>
                                 </li>
-                                <li class="submenu-item ">
-                                    <a href="error-500.html">500</a>
-                                </li>
                             </ul>
+                        </li>
+                        <hr>
+                        <li class="sidebar-item">
+                            <a href="{{ url('auth/logout') }}" class='sidebar-link text-danger fw-bold'>
+                                <i class="icon dripicons dripicons-exit text-danger"></i>
+                                <span>Logout</span>
+                            </a>
                         </li>
                     </ul>
                 </div>

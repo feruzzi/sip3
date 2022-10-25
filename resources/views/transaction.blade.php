@@ -26,13 +26,25 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $transaction->transaction_id }}</td>
-                                            <td>{{ $transaction->payment_name }}</td>
-                                            <td class="text-success">{{ $transaction->pay }}</td>
+                                            <td>
+                                                <span
+                                                    class="font-extrabold badge bg-light-warning">{{ $transaction->payment_name }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    class="font-extrabold badge bg-light-success">{{ 'Rp ' . number_format($transaction->pay, 2, ',', '.') }}
+                                                </span>
+                                            </td>
                                         </tr>
                                     @endforeach
                                     <tr class="font-extrabold">
                                         <td colspan="3">Total</td>
-                                        <td class="text-success font-extrabold">{{ $transaction_total }}</td>
+                                        <td>
+                                            <span
+                                                class="font-extrabold badge bg-light-success">{{ 'Rp ' . number_format($transaction_total, 2, ',', '.') }}
+                                            </span>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

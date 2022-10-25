@@ -151,11 +151,64 @@
                     //     username: $('#username').val()
                     // },
                     success: function(response) {
+                        if (response.errors) {
+                            toastError(response.errors)
+                        } else {
+                            console.log(response);
+                            $('#modal-delete').modal('hide');
+                            $("#tb_user").DataTable().ajax.reload(null, false);
+                            toastSuccess(response.msg)
+                        }
+                    }
+                });
+            });
+        });
+        $(document).on('click', ".import-user", function(e) {
+            $('#file').val("")
+            $('#import-user-modal').modal('show');
+            $(document).off('click', '.save-import-user').on('click', '.save-import-user', function() {
+                $(" #user-upload-status span").text("Mohon Tunggu . . .");
+                var fd = new FormData($("#form-import-user")[0]);
+                $.ajax({
+                    url: 'user/import',
+                    type: "POST",
+                    data: fd,
+                    xhr: function() {
+                        //upload Progress
+                        var xhr = $.ajaxSettings.xhr();
+                        if (xhr.upload) {
+                            xhr.upload.addEventListener('progress', function(event) {
+                                var percent = 0;
+                                var position = event.loaded || event.position;
+                                var total = event.total;
+                                if (event.lengthComputable) {
+                                    percent = Math.ceil(position / total * 100);
+                                }
+                                //update progressbar
+                                $(" .user-upload-bar").css("width", +
+                                    percent + "%");
+                                $(" .status").text(percent + "%");
+                                if (percent == 100) {
+                                    $(" #user-upload-status span").text(
+                                        "Upload Sukses !!!");
+                                    $(" #user-upload-status span").removeClass(
+                                        "bg-light-danger");
+                                    $(" #user-upload-status span").addClass(
+                                        "bg-light-success");
+                                }
+                            }, true);
+                        }
+                        return xhr;
+                    },
+                    success: function(response) {
                         console.log(response);
-                        $('#modal-delete').modal('hide');
+                        $('#import-user-modal').modal('hide');
                         $("#tb_user").DataTable().ajax.reload(null, false);
                         toastSuccess(response.msg)
-                    }
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
                 });
             });
         });
@@ -182,7 +235,15 @@
     <section class="section">
         <div class="col-12">
             <div class="d-flex mb-3">
-                <a class="ms-auto btn btn-primary add-user">Tambah User Baru</a>
+                <div class="ms-auto">
+                    {{-- <form action="{{ url('user/import') }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <input type="file" name="file" class="form-control">
+                        <button class="btn btn-success import-user mx-3">Import User Excel</button>
+                    </form> --}}
+                    <a class="btn btn-success import-user mx-3">Import User Excel</a>
+                    <a class="btn btn-primary add-user">Tambah User Baru</a>
+                </div>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -321,6 +382,56 @@
                         <i class="bx bx-check d-block d-sm-none"></i>
                         <span class="d-none d-sm-block">Simpan</span>
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade text-left" id="import-user-modal" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel110" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success">
+                    <h5 class="modal-title white" id="myModalLabel110">Import User
+                    </h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <i data-feather="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex">
+                        <a href="{{ asset('template_upload_users.xlsx') }}" class="ms-auto btn btn-success">
+                            <i class="bx bx-check d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Download Tempate Excel</span>
+                        </a>
+                    </div>
+                    <form id="form-import-user" name="form-import-user" method="post" enctype="multipart/form-data">
+                        {{-- @csrf --}}
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Upload File EXCEL</label>
+                            <input class="form-control form-control-sm" id="file" name="file" type="file">
+                            <code>ID Angkatan dan ID Jurusan yang diupload harus sudah terdaftar terlebih dahulu </code>
+                            {{-- <input type="text" name="filex" id="filex"> --}}
+                            <div class="progress progress-success progress-sm  mb-4">
+                                <div class="progress-bar user-upload-bar" role="progressbar" aria-valuemin="0"
+                                    aria-valuemax="100">
+                                </div>
+                            </div>
+                            <p id="user-upload-status">
+                                <span class="font-extrabold badge bg-light-danger"></span>
+                            </p>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-light-secondary" data-bs-dismiss="modal">
+                        <i class="bx bx-x d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Close</span>
+                    </a>
+
+                    <button type="button" class="btn btn-success ml-1 save-import-user">
+                        <i class="bx bx-check d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Upload</span>
+                    </button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -23,6 +23,9 @@ return new class extends Migration
             $table->foreign('bill_id')->references('bill_id')->on('bills')->restrictOnDelete()->restrictOnUpdate();
             $table->foreign('payment_id')->references('payment_id')->on('payments')->restrictOnDelete()->restrictOnUpdate();
             $table->string('pay');
+            $table->string('admin')->index();
+            $table->date('pay_date');
+            $table->foreign('admin')->references('username')->on('users')->restrictOnDelete()->restrictOnUpdate();
             $table->string('note')->nullable();
             $table->string('photo')->nullable();
             $table->timestamps();

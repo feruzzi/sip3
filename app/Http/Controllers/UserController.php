@@ -7,6 +7,9 @@ use App\Models\Group1;
 use App\Models\Group2;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Imports\UsersImport;
+use Exception;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -196,7 +199,16 @@ class UserController extends Controller
     public function destroy(User $user, $id)
     {
         // return response()->json($id);
-        User::where('username', $id)->delete();
-        return response()->json(['msg' => "$id Berhasil Dihapus"]);
+        try {
+            User::where('username', $id)->delete();
+            return response()->json(['msg' => "$id Berhasil Dihapus"]);
+        } catch (Exception $e) {
+            return response()->json(['errors' => 'Terjadi Kesalahan, Tidak Dapat Menghapus Data']);
+        }
+    }
+    public function import_users(Request $request)
+    {
+        Excel::import(new UsersImport, request()->file('file'));
+        return response()->json(['msg' => "Data User Berhasil Di Upload"]);
     }
 }

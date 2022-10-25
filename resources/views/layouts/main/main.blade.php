@@ -4,12 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>SIP - Sistem Informasi Pembayaran</title>
 
     <link rel="stylesheet" href="{{ asset('assets/css/main/app.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/main/app-dark.css') }}">
     <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.svg') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.png') }}" type="image/png">
+    @stack('header-js')
 
 </head>
 
@@ -58,7 +61,7 @@
                                 <div class="user-menu d-flex">
                                     <div class="user-name text-end me-3">
                                         <h6 class="mb-0 text-gray-600">{{ $name }}</h6>
-                                        <p class="mb-0 text-sm text-gray-600">Pengguna</p>
+                                        <p class="mb-0 text-sm text-gray-600">{{ auth()->user()->username }}</p>
                                     </div>
                                     <div class="user-img d-flex align-items-center">
                                         <div class="avatar avatar-md">
@@ -78,8 +81,8 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="#"><i
-                                            class="icon-mid bi bi-box-arrow-left me-2"></i> Logout</a></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url('auth/logout') }}"><i
+                                            class="icon-mid bi bi-box-arrow-left me-2 text-danger"></i> Logout</a></li>
                             </ul>
                         </div>
                     </div>
@@ -118,8 +121,17 @@
             </div>
         </div>
     </div>
+    <script src="{{ asset('assets/extensions/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+    @stack('footer-js')
 
 </body>
 

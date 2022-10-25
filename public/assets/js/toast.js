@@ -5,7 +5,10 @@ function toastSuccess(msg) {
         close: true,
         gravity: "bottom",
         position: "right",
-        backgroundColor: "#4fbe87",
+        style: {
+            background: "#4fbe87",
+        },
+        // backgroundColor: "#4fbe87",
     }).showToast();
 }
 function toastError(msg) {
@@ -15,6 +18,9 @@ function toastError(msg) {
         close: true,
         gravity: "bottom",
         position: "right",
-        backgroundColor: "#f3616d",
+        style: {
+            background: "#f3616d",
+        },
+        // backgroundColor: "#f3616d",
     }).showToast();
 }

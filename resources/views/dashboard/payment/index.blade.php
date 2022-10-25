@@ -7,6 +7,8 @@
 @push('footer-js')
     <script src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
     <script src="{{ asset('assets/js/toast.js') }}"></script>
+    <script src="{{ asset('assets/js/currency_converter.js') }}"></script>
+
     <script>
         $(document).ready(function() {
             let tb_payment = $("#tb_payment").DataTable({
@@ -42,6 +44,11 @@
         $(document).ready(function() {
             $(document).on("click", ".add-payment", function(e) {
                 $('#payment-modal').modal('show');
+                $("#payment_id").prop('disabled', false);
+                $('.alert-light-danger').addClass('d-none');
+                $('#payment_id').val("");
+                $('#payment_name').val("");
+                $('#payment_amount').val("");
                 $(document).off('click', '.save-payment').on('click', '.save-payment', function() {
                     createUpdate();
                 });
@@ -55,9 +62,13 @@
                         url: 'payment/delete/' + id,
                         type: 'DELETE',
                         success: function(response) {
-                            $("#tb_payment").DataTable().ajax.reload(null, false);
-                            $('#modal-delete').modal('hide');
-                            toastSuccess(response.msg)
+                            if (response.errors) {
+                                toastError(response.errors)
+                            } else {
+                                $("#tb_payment").DataTable().ajax.reload(null, false);
+                                $('#modal-delete').modal('hide');
+                                toastSuccess(response.msg)
+                            }
                         }
                     });
                 });
@@ -75,6 +86,11 @@
             // });
             $(document).on('click', ".edit-payment", function(e) {
                 var id = $(this).data('id');
+                $("#payment_id").prop('disabled', true);
+                $('.alert-light-danger').addClass('d-none');
+                $('#payment_id').val("");
+                $('#payment_name').val("");
+                $('#payment_amount').val("");
                 $.ajax({
                     url: 'payment/' + id + '/edit',
                     type: 'GET',
@@ -123,7 +139,7 @@
                 data: {
                     payment_id: $('#payment_id').val(),
                     payment_name: $('#payment_name').val(),
-                    payment_amount: $('#payment_amount').val()
+                    payment_amount: $('#payment_amount').autoNumeric('get')
                 },
                 success: function(response) {
                     if (response.errors) {
@@ -252,8 +268,8 @@
                     <div class="col-sm-12">
                         <div class="form-group">
                             <label for="payment_amount">Nominal Pembayaran</label>
-                            <input type="text" id="payment_amount" name="payment_amount" class="form-control round"
-                                placeholder="Nominal Pembayaran">
+                            <input type="text" id="payment_amount" name="payment_amount"
+                                class="form-control round amount_format" placeholder="Nominal Pembayaran">
                         </div>
                     </div>
 

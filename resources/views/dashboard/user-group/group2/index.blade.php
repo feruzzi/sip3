@@ -91,10 +91,14 @@
                 //     username: $('#username').val()
                 // },
                 success: function(response) {
-                    console.log(response);
-                    $('#modal-delete').modal('hide');
-                    $("#tb_group2").DataTable().ajax.reload(null, false);
-                    toastSuccess(response.msg)
+                    if (response.errors) {
+                        toastError(response.errors)
+                    } else {
+                        console.log(response);
+                        $('#modal-delete').modal('hide');
+                        $("#tb_group2").DataTable().ajax.reload(null, false);
+                        toastSuccess(response.msg)
+                    }
                 }
             });
         });

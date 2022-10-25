@@ -8,13 +8,14 @@ use App\Models\Bill;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 
 class PageController extends Controller
 {
     public function info_bill()
     {
-        $user = "user2";
+        $user = auth()->user()->username;
         // $bills = DB::select('SELECT users.name,bills.bill_id,payments.payment_name,bills.bill_amount,COALESCE(transaksi,0) AS pay,COALESCE(transaksi,0)-bills.bill_amount AS debit FROM bills INNER JOIN payments ON bills.payment_id=payments.payment_id LEFT JOIN (SELECT transactions.bill_id, SUM(transactions.pay) AS transaksi FROM transactions GROUP BY transactions.bill_id) transactions ON bills.bill_id=transactions.bill_id INNER JOIN users ON bills.username=users.username  WHERE bills.username="user2"
         // ');
         $bills = DB::table('bills')
@@ -43,7 +44,7 @@ class PageController extends Controller
     }
     public function info_transaction()
     {
-        $user = "user2";
+        $user = auth()->user()->username;
         $transactions = DB::table('transactions')
             ->select(DB::raw('transactions.transaction_id,payments.payment_name,transactions.pay,users.name'))->join('users', 'transactions.username', '=', 'users.username')
             ->join('payments', 'transactions.payment_id', '=', 'payments.payment_id')
@@ -58,7 +59,7 @@ class PageController extends Controller
     }
     public function change_password()
     {
-        $user = "user2";
+        $user = auth()->user()->username;
         return view('change-password', [
             'set_active' => 'change_password',
             'name' => User::where('username', '=', $user)->value('name'),
@@ -86,5 +87,27 @@ class PageController extends Controller
             'bill_on' => $bill_on
         ]);
         // dd($total_users->count());
+    }
+    public function update_password(Request $request, $id)
+    {
+        if ($request->password != $request->confirm_password) {
+            return response()->json(['msg' => "Terjadi Kesalahan", 'errors' => [
+                'password' => 'Password Baru dan Konfirmasi Password Baru Tidak Sesuai'
+            ]]);
+        }
+        $validate = Validator::make($request->all(), [
+            'password' => 'required|min:4',
+        ], [
+            'password.required' => 'Password Wajib Diisi',
+            'password.min' => 'Password Minimal 4 Digit',
+        ]);
+        if ($validate->fails()) {
+            return response()->json(['msg' => "Terjadi Kesalahan", 'errors' => $validate->errors()]);
+        } else {
+            User::where('username', $id)->update([
+                'password' => bcrypt($request->password)
+            ]);
+            return response()->json(['msg' => "Berhasil Mengganti Password"]);
+        }
     }
 }

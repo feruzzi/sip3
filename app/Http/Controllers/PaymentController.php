@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Bills;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -47,17 +48,17 @@ class PaymentController extends Controller
     }
     public function set_payment($id)
     {
-        $set = Payment::where('id', $id)->first();
+        $set = Payment::where('payment_id', $id)->first();
         if ($set->payment_status == "1") {
-            Payment::where('id', $id)->update([
+            Payment::where('payment_id', $id)->update([
                 'payment_status' => 0
             ]);
         } else {
-            Payment::where('id', $id)->update([
+            Payment::where('payment_id', $id)->update([
                 'payment_status' => 1
             ]);
         }
-        return response()->json(['msg' => "Status Pembayaran Berhasil Dirubah"]);
+        return response()->json(['msg' => "Status Pembayaran $id Berhasil Dirubah"]);
     }
 
     /**
@@ -94,7 +95,7 @@ class PaymentController extends Controller
             'payment_amount.numeric' => 'Nominal Pembayaran Harus Berupa Angka',
         ]);
         if ($validate->fails()) {
-            return response()->json(['msg' => "Pembayaran Gagal Ditambahkan", 'errors' => $validate->errors()]);
+            return response()->json(['msg' => "Pembayaran $request->payment_id Gagal Ditambahkan", 'errors' => $validate->errors()]);
         } else {
             Payment::create([
                 'payment_id' => $request->payment_id,
@@ -102,7 +103,7 @@ class PaymentController extends Controller
                 'payment_amount' => $request->payment_amount,
                 'payment_status' => 1
             ]);
-            return response()->json(['msg' => "Pembayaran Berhasil Ditambahkan"]);
+            return response()->json(['msg' => "Pembayaran $request->payment_id Berhasil Ditambahkan"]);
         }
     }
 
@@ -125,7 +126,7 @@ class PaymentController extends Controller
      */
     public function edit(Payment $payment, $id)
     {
-        $data = Payment::where('id', $id)->first();
+        $data = Payment::where('payment_id', $id)->first();
         return response()->json(['result' => $data]);
     }
 
@@ -140,30 +141,24 @@ class PaymentController extends Controller
     {
         // return response()->json($request);
         $validate = Validator::make($request->all(), [
-            'payment_id' => 'required|unique:payments|max:10|min:4',
             'payment_name' => 'required|min:5',
             'payment_amount' => 'required|numeric',
         ], [
-            'payment_id.required' => 'ID Pembayaran Wajib Diisi',
-            'payment_id.unique' => 'ID Pembayaran Sudah Digunakan',
-            'payment_id.min' => 'ID Pembayaran Minimal 4 Digit',
-            'payment_id.max' => 'ID Pembayaran Maksimal 10 Digit',
             'payment_name.required' => 'Nama Pembayaran Wajib Diisi',
             'payment_name.min' => 'Nama Pembayaran Minimal 5 Digit',
             'payment_amount.required' => 'Nominal Pembayaran Wajib Diisi',
             'payment_amount.numeric' => 'Nominal Pembayaran Harus Berupa Angka',
         ]);
         if ($validate->fails()) {
-            return response()->json(['msg' => "Pembayaran Gagal Ditambahkan", 'errors' => $validate->errors()]);
+            return response()->json(['msg' => "Pembayaran $id Gagal Diperbarui", 'errors' => $validate->errors()]);
         } else {
-            Payment::where('id', $id)->update([
-                'payment_id' => $request->payment_id,
+            Payment::where('payment_id', $id)->update([
                 'payment_name' => $request->payment_name,
                 'payment_amount' => $request->payment_amount,
                 'payment_status' => 1
             ]);
         }
-        return response()->json(['msg' => "Pembayaran Berhasil diperbarui"]);
+        return response()->json(['msg' => "Pembayaran $id Berhasil Diperbarui"]);
     }
 
     /**
@@ -175,7 +170,11 @@ class PaymentController extends Controller
     public function destroy(Payment $payment, $id)
     {
         // return response($id);
-        Payment::where('id', $id)->delete();
-        return response()->json(['msg' => "Pembayaran Berhasil Dihapus"]);
+        try {
+            Payment::where('payment_id', $id)->delete();
+            return response()->json(['msg' => "Pembayaran $id Berhasil Dihapus"]);
+        } catch (Exception $e) {
+            return response()->json(['errors' => "Terjadi Kesalahan, Tidak Dapat Menghapus Data"]);
+        }
     }
 }

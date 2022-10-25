@@ -132,10 +132,14 @@
                                 bill_id: bill_ids,
                             },
                             success: function(response) {
-                                console.log(response);
-                                $("#tb_bill").DataTable().ajax.reload();
-                                $('#delete-bill-modal').modal('hide');
-                                toastSuccess(response.msg)
+                                if (response.errors) {
+                                    toastError(response.errors)
+                                } else {
+                                    console.log(response);
+                                    $("#tb_bill").DataTable().ajax.reload();
+                                    $('#delete-bill-modal').modal('hide');
+                                    toastSuccess(response.msg)
+                                }
                             }
                         });
                     });
@@ -177,7 +181,7 @@
                         });
                         $.ajax({
                             url: "bill/update/" + id,
-                            type: "POST",
+                            type: "PUT",
                             data: {
                                 data_bill: data_bill,
                             },
@@ -309,9 +313,9 @@
                             <div class="form-group">
                                 <label for="group1">Tahun</label>
                                 <select id="group1" name="group1" class="form-select">
-                                    <option value="2020">2020</option>
-                                    <option value="2021">2021</option>
-                                    <option value="2022">2022</option>
+                                    @foreach ($groups1 as $group1)
+                                        <option value="{{ $group1->group1_id }}">{{ $group1->group1_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -319,9 +323,9 @@
                             <div class="form-group">
                                 <label for="group2">Jurusan</label>
                                 <select id="group2" name="group2" class="form-select">
-                                    <option value="IPA 1">IPA 1</option>
-                                    <option value="IPA 2">IPA 2</option>
-                                    <option value="IPA 3">IPA 3</option>
+                                    @foreach ($groups2 as $group2)
+                                        <option value="{{ $group2->group2_id }}">{{ $group2->group2_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>

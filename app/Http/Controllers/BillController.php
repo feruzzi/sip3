@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Bill;
 use App\Models\User;
+use App\Models\Group1;
+use App\Models\Group2;
 use App\Models\Payment;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -29,14 +32,21 @@ class BillController extends Controller
         return view('dashboard.bill.index', [
             'set_active' => 'bill',
             'payments' => Payment::where('payment_status', 1)->get(),
+            'groups1' => Group1::where('group1_status', 1)->get(),
+            'groups2' => Group2::where('group2_status', 1)->get(),
             // 'bills' => $bills
         ]);
     }
     public function ajax_view()
     {
+        // $bills = DB::table('bills')
+        //     ->select(DB::raw('bills.username,users.name,SUM(bills.bill_amount) total_bill,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
+        //     ->groupBy('bills.username')
+        //     ->get();
         $bills = DB::table('bills')
-            ->select(DB::raw('bills.username,users.name,SUM(bills.bill_amount) total_bill,COUNT(bills.bill_id) AS tagihan'))->join('users', 'bills.username', '=', 'users.username')
-            ->groupBy('bills.username')
+            ->select(DB::raw('users.username,users.name,COALESCE(SUM(bills.bill_amount),0) total_bill,COUNT(bills.bill_id) AS tagihan'))->rightJoin('users', 'bills.username', '=', 'users.username')
+            ->where('users.level', 0)
+            ->groupBy('users.username')
             ->get();
         return Datatables::of($bills)
             ->addIndexColumn()
@@ -102,6 +112,7 @@ class BillController extends Controller
             'group1' => $request->group1,
             'group2' => $request->group2
         ])->pluck('username');
+        $count_username = count($username);
         // return response()->json($username);
         $amount = Payment::where('payment_id', $request->payment_id)->value('payment_amount');
         // return response()->json($amount);
@@ -116,9 +127,22 @@ class BillController extends Controller
                 'bill_amount' => $amount,
             ]);
         }
-        return response()->json(['msg' => "Tagihan $request->payment_id Berhasil ditambahkan"]);
+        return response()->json(['msg' => "Tagihan $request->payment_id Berhasil ditambahkan ke $count_username User"]);
     }
-
+    public function free_user()
+    {
+        // SELECT users.username FROM users LEFT JOIN bills ON users.username = bills.username WHERE bills.username IS NULL AND users.level = 0;
+        $free_user = DB::table('users')
+            ->select(DB::raw('users.username,users.name'))->leftJoin('bills', 'users.username', '=', 'bills.username')
+            ->where('users.level', 0)
+            ->whereNull('bills.username')
+            ->get();
+        return response()->json($free_user);
+        // dd($free_user);
+    }
+    public function first_bill()
+    {
+    }
     /**
      * Display the specified resource.
      *
@@ -134,7 +158,8 @@ class BillController extends Controller
     }
     public function show_info($id)
     {
-        $infos = DB::table('bills')->select('users.username', 'users.name')->join('users', 'bills.username', '=', 'users.username')->where('bills.username', $id)->first();
+        // $infos = DB::table('bills')->select('users.username', 'users.name')->join('users', 'bills.username', '=', 'users.username')->where('bills.username', $id)->first();
+        $infos = DB::table('bills')->select('users.username', 'users.name')->rightJoin('users', 'bills.username', '=', 'users.username')->where('users.username', $id)->first();
         return response()->json($infos);
     }
     /**
@@ -175,9 +200,14 @@ class BillController extends Controller
      */
     public function destroy(Bill $bill, Request $request)
     {
-        foreach ($request->bill_id as $bill) {
-            Bill::where('bill_id', $bill)->delete();
+        try {
+
+            foreach ($request->bill_id as $bill) {
+                Bill::where('bill_id', $bill)->delete();
+            }
+            return response()->json(['msg' => "Tagihan Berhasil Dihapus"]);
+        } catch (Exception $e) {
+            return response()->json(['errors' => "Terjadi Kesalahan, Tidak Dapat Menghapus Data"]);
         }
-        return response()->json(['msg' => "Tagihan Berhasil Dihapus"]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Group1;
 use App\Models\Group2;
+use Exception;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
@@ -247,12 +248,21 @@ class UserGroupController extends Controller
      */
     public function group1_destroy($id)
     {
-        Group1::where('group1_id', $id)->delete();
-        return response()->json(['msg' => "$id Berhasil dihapus"]);
+        try {
+            Group1::where('group1_id', $id)->delete();
+            return response()->json(['msg' => "$id Berhasil dihapus"]);
+        } catch (Exception $e) {
+            return response()->json(['errors' => "Terjadi Kesalahan, Tidak Dapat Menghapus Data"]);
+        }
     }
     public function group2_destroy($id)
     {
-        Group2::where('group2_id', $id)->delete();
-        return response()->json(['msg' => "$id Berhasil dihapus"]);
+        try {
+
+            Group2::where('group2_id', $id)->delete();
+            return response()->json(['msg' => "$id Berhasil dihapus"]);
+        } catch (Exception $e) {
+            return response()->json(['errors' => "Terjadi Kesalahan, Tidak Dapat Menghapus Data"]);
+        }
     }
 }
