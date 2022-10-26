@@ -7,8 +7,8 @@
     <title>Login - SIP</title>
     <link rel="stylesheet" href="{{ asset('assets/css/main/app.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/pages/auth.css') }}">
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.svg') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ asset('assets/images/logo/Syntax_Error.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/images/logo/Syntax_Error.png') }}" type="image/png">
 </head>
 
 <body>
@@ -18,7 +18,8 @@
             <div class="col-lg-5 col-12">
                 <div id="auth-left">
                     <div class="auth-logo">
-                        <a href="index.html"><img src="{{ asset('assets/images/logo/logo.svg') }}" alt="Logo"></a>
+                        <a href="index.html"><img src="{{ asset('assets/images/logo/Syntax_Error.svg') }}"
+                                alt="Logo"></a>
                     </div>
                     <h1 class="auth-title">Log in.</h1>
                     <p class="auth-subtitle mb-5">Silahkan Login Kedalam <b>Sistem Informasi Pembayaran</b> menggunakan
