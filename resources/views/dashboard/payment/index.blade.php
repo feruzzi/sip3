@@ -13,7 +13,7 @@
         $(document).ready(function() {
             let tb_payment = $("#tb_payment").DataTable({
                 processing: true,
-                serverside: true,
+                serverSide: true,
                 autoWidth: false,
                 ajax: "{{ url('payment/data') }}",
                 dataSrc: '',
@@ -57,7 +57,6 @@
                 var id = $(this).data('id');
                 $('#modal-delete').modal('show');
                 $(document).off('click', '.delete-data').on('click', '.delete-data', function() {
-                    console.log(id)
                     $.ajax({
                         url: 'payment/delete/' + id,
                         type: 'DELETE',
@@ -73,17 +72,6 @@
                     });
                 });
             });
-            // $(document).on('click', ".delete-payment", function() {
-            //     var id = $(this).data('id');
-            //     console.log(id)
-            //     $.ajax({
-            //         url: 'payment/delete/' + id,
-            //         type: 'DELETE',
-            //         success: function(response) {
-            //             $("#tb_payment").DataTable().ajax.reload(null, false);
-            //         }
-            //     });
-            // });
             $(document).on('click', ".edit-payment", function(e) {
                 var id = $(this).data('id');
                 $("#payment_id").prop('disabled', true);
@@ -96,7 +84,6 @@
                     type: 'GET',
                     success: function(response) {
                         $('.modal-header #modal-payment-title').text('Edit Pembayaran');
-                        console.log(response.result);
                         $('#payment-modal').modal('show');
                         $('#payment_id').val(response.result.payment_id);
                         $('#payment_name').val(response.result.payment_name);
@@ -161,7 +148,6 @@
         }
     </script>
     <script src="{{ asset('assets/extensions/toastify-js/src/toastify.js') }}"></script>
-    {{-- <script src="{{ asset('assets/js/pages/toastify.js') }}"></script> --}}
 @endpush
 @section('content')
     <div class="page-title">
@@ -203,36 +189,6 @@
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
-                            {{-- <tbody>
-                                @foreach ($payments as $payment)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $payment->payment_id }}</td>
-                                        <td>{{ $payment->payment_name }}</td>
-                                        <td>{{ 'Rp ' . number_format($payment->payment_amount, 2, ',', '.') }}</td>
-                                        <td>
-                                            <span
-                                                class="font-extrabold {{ $payment->payment_status == 1 ? 'badge bg-light-success' : 'badge bg-light-warning' }}">{{ $payment->payment_status == 1 ? 'Aktif' : 'Tidak Aktif' }}
-                                            </span>
-                                        </td>
-                                        <td class="d-flex justify-content-start align-items-center">
-                                            <a class="btn btn-sm btn-outline-danger delete-payment"
-                                                data-id="{{ $payment->id }}"><i
-                                                    class="icon dripicons dripicons-trash text-danger"></i></a>
-                                            <a class="btn btn-sm btn-outline-warning mx-2 edit-payment"
-                                                data-id="{{ $payment->id }}"><i
-                                                    class="icon dripicons dripicons-document-edit text-warning"></i></a>
-                                            @if ($payment->payment_status == 1)
-                                                <a class="btn btn-sm btn-outline-danger" href="#"><i
-                                                        class="icon dripicons dripicons-wrong text-danger"></i></a>
-                                            @elseif($payment->payment_status == 0)
-                                                <a class="btn btn-sm btn-outline-success" href="#"><i
-                                                        class="icon dripicons dripicons-checkmark text-success"></i></a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody> --}}
                         </table>
                     </div>
                 </div>

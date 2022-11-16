@@ -13,7 +13,7 @@
         $(document).ready(function() {
             let tb_payment = $("#tb_detail_transaction").DataTable({
                 processing: true,
-                serverside: true,
+                serverSide: true,
                 autoWidth: false,
                 ajax: "{{ url('detail-transaction/data') }}",
                 dataSrc: '',
@@ -58,7 +58,6 @@
                 url: "bill/detail/" + id,
                 type: "GET",
                 success: function(response) {
-                    console.log(response);
                     $('#username').val(id)
                     $('#name').val(name)
                     $('#transaction_id').val(transaction_id)
@@ -72,7 +71,6 @@
                         url: 'detail-transaction/' + transaction_id + '/edit',
                         type: 'GET',
                         success: function(response) {
-                            console.log(response.result);
                             $('#edit-transaction-modal').modal('show');
                             $('.alert-light-danger').addClass('d-none');
                             $('#date').val(response.result.pay_date);
@@ -114,7 +112,6 @@
                                                     .append("</ul>");
                                                 toastError(response.msg)
                                             } else {
-                                                console.log(response);
                                                 $('.alert-light-danger')
                                                     .addClass('d-none');
                                                 $("#tb_detail_transaction")
@@ -138,7 +135,6 @@
             var id = $(this).data('transaction_id');
             $('#modal-delete').modal('show');
             $(document).off('click', '.delete-data').on('click', '.delete-data', function() {
-                console.log(id)
                 $.ajax({
                     url: 'detail-transaction/delete/' + id,
                     type: 'DELETE',
@@ -172,9 +168,6 @@
     </div>
     <section class="section">
         <div class="col-12">
-            {{-- <div class="d-flex mb-3">
-                <a class="ms-auto btn btn-primary">Tambah Transaksi Baru</a>
-            </div> --}}
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Tabel Transaksi</h4>

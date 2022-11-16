@@ -12,7 +12,7 @@
         $(document).ready(function() {
             let tb_bill = $("#tb_user").DataTable({
                 processing: true,
-                serverside: true,
+                serverSide: true,
                 autoWidth: false,
                 ajax: "{{ url('users/data') }}",
                 dataSrc: '',
@@ -73,7 +73,6 @@
                     $(".modal-header").removeClass("bg-primary")
                     $(".modal-header").addClass("bg-warning")
                     $('.modal-header #user-modal-header').text('Edit User');
-                    console.log(response.result);
                     $('#username').val(response.result.username);
                     $('#name').val(response.result.name);
                     $('#group1').val(response.result.group1);
@@ -116,7 +115,6 @@
                         $('.alert-light-danger').append("</ul>");
                         toastError(response.msg)
                     } else {
-                        console.log(response);
                         $('#add-user-modal').modal('hide');
                         $("#tb_user").DataTable().ajax.reload();
                         toastSuccess(response.msg)
@@ -129,11 +127,7 @@
             $.ajax({
                 url: 'user/set/' + id,
                 type: "PUT",
-                // data: {
-                //     username: $('#username').val()
-                // },
                 success: function(response) {
-                    console.log(response);
                     $("#tb_user").DataTable().ajax.reload(null, false);
                     toastSuccess(response.msg)
                 }
@@ -147,14 +141,10 @@
                 $.ajax({
                     url: 'user/delete/' + id,
                     type: "DELETE",
-                    // data: {
-                    //     username: $('#username').val()
-                    // },
                     success: function(response) {
                         if (response.errors) {
                             toastError(response.errors)
                         } else {
-                            console.log(response);
                             $('#modal-delete').modal('hide');
                             $("#tb_user").DataTable().ajax.reload(null, false);
                             toastSuccess(response.msg)
@@ -201,7 +191,6 @@
                         return xhr;
                     },
                     success: function(response) {
-                        console.log(response);
                         $('#import-user-modal').modal('hide');
                         $("#tb_user").DataTable().ajax.reload(null, false);
                         toastSuccess(response.msg)
@@ -236,11 +225,6 @@
         <div class="col-12">
             <div class="d-flex mb-3">
                 <div class="ms-auto">
-                    {{-- <form action="{{ url('user/import') }}" method="post" enctype="multipart/form-data">
-                        @csrf
-                        <input type="file" name="file" class="form-control">
-                        <button class="btn btn-success import-user mx-3">Import User Excel</button>
-                    </form> --}}
                     <a class="btn btn-success import-user mx-3">Import User Excel</a>
                     <a class="btn btn-primary add-user">Tambah User Baru</a>
                 </div>
@@ -264,39 +248,6 @@
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
-                            {{-- <tbody>
-                                @foreach ($users as $user)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $user->username }}</td>
-                                        <td>{{ $user->group1 }}</td>
-                                        <td>{{ $user->group2 }}</td>
-                                        <td>
-                                            <span
-                                                class="font-extrabold mx-3 {{ $user->level == 1 ? 'badge bg-light-danger' : 'badge bg-light-secondary' }}">{{ $user->level == 1 ? 'Administator' : 'Pengguna' }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span
-                                                class="font-extrabold {{ $user->status == 1 ? 'badge bg-light-success' : 'badge bg-light-warning' }}">{{ $user->status == 1 ? 'Aktif' : 'Tidak Aktif' }}
-                                            </span>
-                                        </td>
-                                        <td class="d-flex justify-content-start align-items-center">
-                                            <a class="btn btn-sm btn-outline-danger" href="#"><i
-                                                    class="icon dripicons dripicons-trash text-danger"></i></a>
-                                            <a class="btn btn-sm btn-outline-warning mx-2" href="#"><i
-                                                    class="icon dripicons dripicons-document-edit text-warning"></i></a>
-                                            @if ($user->status == 1)
-                                                <a class="btn btn-sm btn-outline-danger" href="#"><i
-                                                        class="icon dripicons dripicons-wrong text-danger"></i></a>
-                                            @elseif($user->status == 0)
-                                                <a class="btn btn-sm btn-outline-success" href="#"><i
-                                                        class="icon dripicons dripicons-checkmark text-success"></i></a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody> --}}
                         </table>
                     </div>
                 </div>
@@ -405,12 +356,10 @@
                         </a>
                     </div>
                     <form id="form-import-user" name="form-import-user" method="post" enctype="multipart/form-data">
-                        {{-- @csrf --}}
                         <div class="mb-3">
                             <label for="file" class="form-label">Upload File EXCEL</label>
                             <input class="form-control form-control-sm" id="file" name="file" type="file">
                             <code>ID Angkatan dan ID Jurusan yang diupload harus sudah terdaftar terlebih dahulu </code>
-                            {{-- <input type="text" name="filex" id="filex"> --}}
                             <div class="progress progress-success progress-sm  mb-4">
                                 <div class="progress-bar user-upload-bar" role="progressbar" aria-valuemin="0"
                                     aria-valuemax="100">

@@ -13,7 +13,7 @@
         $(document).ready(function() {
             let tb_payment = $("#tb_transaction").DataTable({
                 processing: true,
-                serverside: true,
+                serverSide: true,
                 autoWidth: false,
                 ajax: "{{ url('transaction/data') }}",
                 dataSrc: '',
@@ -43,12 +43,10 @@
             $(".list-transaction").remove();
             $('#detail-transaction-modal').modal('show');
             var id = $(this).data('id');
-            alert(id);
             $.ajax({
                 url: "transaction/detail/" + id,
                 type: "GET",
                 success: function(response) {
-                    console.log(response.result);
                     $.each(response, function(key, value) {
                         $(".body_detail_transaction").append(
                             "<tr class='list-transaction'><td>" +
@@ -84,7 +82,6 @@
                 url: "bill/detail/" + id,
                 type: "GET",
                 success: function(response) {
-                    console.log(response);
                     $('#username').val(id)
                     $('#name').val(name)
                     $.each(response, function(key, value) {
@@ -118,7 +115,6 @@
                                     $('.alert-light-danger').append("</ul>");
                                     toastError(response.msg)
                                 } else {
-                                    console.log(response);
                                     $('.alert-light-danger').addClass('d-none');
                                     $("#tb_transaction").DataTable().ajax.reload();
                                     $('#add-pay-modal').modal('hide');
@@ -153,9 +149,6 @@
     </div>
     <section class="section">
         <div class="col-12">
-            {{-- <div class="d-flex mb-3">
-                <a class="ms-auto btn btn-primary">Tambah Transaksi Baru</a>
-            </div> --}}
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Tabel Transaksi</h4>
@@ -173,26 +166,6 @@
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
-                            {{-- <tbody>
-                                @foreach ($transactions as $transaction)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $transaction->name }}</td>
-                                        <td>{{ $transaction->group1 }}</td>
-                                        <td>{{ $transaction->group2 }}</td>
-                                        <td>
-                                            <span
-                                                class="font-extrabold badge {{ $transaction->debit < 0 ? 'bg-light-danger' : 'bg-light-success' }}">{{ 'Rp ' . number_format($transaction->debit, 2, ',', '.') }}</span>
-                                        </td>
-                                        <td class="d-flex justify-content-start align-items-center">
-                                            <a class="btn btn-sm btn-outline-primary" href="#"><i
-                                                    class="icon dripicons dripicons-cart text-primary"></i></a>
-                                            <a class="btn btn-sm btn-outline-info mx-2" href="#"><i
-                                                    class="icon dripicons dripicons-information text-info"></i></a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody> --}}
                         </table>
                     </div>
                 </div>

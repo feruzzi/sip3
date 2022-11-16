@@ -22,7 +22,6 @@
                 $(".modal-header").removeClass("bg-primary")
                 $(".modal-header").addClass("bg-warning")
                 $('.modal-header #group1-modal-header').text('Edit Angkatan');
-                console.log(response.result);
                 $('#group1_name').val(response.result.group1_name);
                 $(document).off('click', '.save-group1').on('click', '.save-group1', function() {
                     createUpdateGroup1(id);
@@ -56,7 +55,6 @@
                     $('.alert-light-danger').append("</ul>");
                     toastError(response.msg)
                 } else {
-                    console.log(response);
                     $('#add-group1-modal').modal('hide');
                     $("#tb_group1").DataTable().ajax.reload();
                     toastSuccess(response.msg)
@@ -69,11 +67,7 @@
         $.ajax({
             url: 'group1/set/' + id,
             type: "PUT",
-            // data: {
-            //     username: $('#username').val()
-            // },
             success: function(response) {
-                console.log(response);
                 $("#tb_group1").DataTable().ajax.reload(null, false);
                 toastSuccess(response.msg)
             }
@@ -87,14 +81,10 @@
             $.ajax({
                 url: 'group1/delete/' + id,
                 type: "DELETE",
-                // data: {
-                //     username: $('#username').val()
-                // },
                 success: function(response) {
                     if (response.errors) {
                         toastError(response.errors)
                     } else {
-                        console.log(response);
                         $('#modal-delete').modal('hide');
                         $("#tb_group1").DataTable().ajax.reload(null, false);
                         toastSuccess(response.msg)

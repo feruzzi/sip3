@@ -22,7 +22,6 @@
                 $(".modal-header").removeClass("bg-primary")
                 $(".modal-header").addClass("bg-warning")
                 $('.modal-header #group2-modal-header').text('Edit Jurusan');
-                console.log(response.result);
                 $('#group2_name').val(response.result.group2_name);
                 $(document).off('click', '.save-group2').on('click', '.save-group2', function() {
                     createUpdateGroup2(id);
@@ -56,7 +55,6 @@
                     $('.alert-light-danger').append("</ul>");
                     toastError(response.msg)
                 } else {
-                    console.log(response);
                     $('#add-group2-modal').modal('hide');
                     $("#tb_group2").DataTable().ajax.reload();
                     toastSuccess(response.msg)
@@ -69,11 +67,7 @@
         $.ajax({
             url: 'group2/set/' + id,
             type: "PUT",
-            // data: {
-            //     username: $('#username').val()
-            // },
             success: function(response) {
-                console.log(response);
                 $("#tb_group2").DataTable().ajax.reload(null, false);
                 toastSuccess(response.msg)
             }
@@ -87,14 +81,10 @@
             $.ajax({
                 url: 'group2/delete/' + id,
                 type: "DELETE",
-                // data: {
-                //     username: $('#username').val()
-                // },
                 success: function(response) {
                     if (response.errors) {
                         toastError(response.errors)
                     } else {
-                        console.log(response);
                         $('#modal-delete').modal('hide');
                         $("#tb_group2").DataTable().ajax.reload(null, false);
                         toastSuccess(response.msg)

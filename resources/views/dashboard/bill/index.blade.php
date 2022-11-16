@@ -12,7 +12,7 @@
         $(document).ready(function() {
             let tb_bill = $("#tb_bill").DataTable({
                 processing: true,
-                serverside: true,
+                serverSide: true,
                 autoWidth: false,
                 ajax: "{{ url('bill/data') }}",
                 dataSrc: '',
@@ -47,7 +47,6 @@
                         payment_id: $('#payment_id').val()
                     },
                     success: function(response) {
-                        // console.log(response);
                         $("#tb_bill").DataTable().ajax.reload();
                         $('#mass-bill-modal').modal('hide');
                         toastSuccess(response.msg)
@@ -58,12 +57,10 @@
         });
         $(document).on("click", ".add-bill", function(e) {
             var id = $(this).data('id');
-            alert(id);
             $.ajax({
                 url: "bill/show/" + id,
                 type: "GET",
                 success: function(response) {
-                    console.log(response);
                     $('#add-bill-modal').modal('show');
                     $('#username').val(response.username);
                     $('#name').val(response.name);
@@ -89,7 +86,6 @@
                                         $('.alert-light-danger').append("</ul>");
                                         toastError(response.msg)
                                     } else {
-                                        console.log(response);
                                         $('.alert-light-danger').addClass('d-none');
                                         $("#tb_bill").DataTable().ajax.reload();
                                         $('#add-bill-modal').modal('hide');
@@ -105,12 +101,10 @@
             $(".list-bill").remove();
             $('#delete-bill-modal').modal('show');
             var id = $(this).data('id');
-            alert(id);
             $.ajax({
                 url: "bill/detail/" + id,
                 type: "GET",
                 success: function(response) {
-                    console.log(response);
                     $.each(response, function(key, value) {
                         $(".body_list_bill").append("<tr class='list-bill'><td>" +
                             value.bill_id + "</td><td>" +
@@ -135,7 +129,6 @@
                                 if (response.errors) {
                                     toastError(response.errors)
                                 } else {
-                                    console.log(response);
                                     $("#tb_bill").DataTable().ajax.reload();
                                     $('#delete-bill-modal').modal('hide');
                                     toastSuccess(response.msg)
@@ -150,12 +143,10 @@
             $(".list-bill").remove();
             $('#edit-bill-modal').modal('show');
             var id = $(this).data('id');
-            alert(id);
             $.ajax({
                 url: "bill/detail/" + id,
                 type: "GET",
                 success: function(response) {
-                    console.log(response);
                     $.each(response, function(key, value) {
                         $(".list-edit-bill").append(
                             "<div class='form-group list-bill'><label for='" +
@@ -186,7 +177,6 @@
                                 data_bill: data_bill,
                             },
                             success: function(response) {
-                                console.log(response);
                                 $("#tb_bill").DataTable().ajax.reload();
                                 $('#edit-bill-modal').modal('hide');
                                 toastSuccess(response.msg)
@@ -200,29 +190,16 @@
             $(".list-bill").remove();
             $('#detail-bill-modal').modal('show');
             var id = $(this).data('id');
-            alert(id);
             $.ajax({
                 url: "bill/detail/" + id,
                 type: "GET",
                 success: function(response) {
-                    console.log(response);
-                    // $('.body_detail_bill').html("<tbody>");
-                    // $('.body_detail_bill').html("<tr>");
                     $.each(response, function(key, value) {
                         $(".body_detail_bill").append("<tr class='list-bill'><td>" +
                             value.payment_name + "</td><td>Rp " + toRupiah(value
                                 .bill_amount) +
                             "</td></tr>");
-                        // $('.body_detail_bill').find('tbody').append("<td>" + value
-                        //     .payment_name +
-                        //     "</td>");
-                        // $('.body_detail_bill').find('tbody').append("<td>" + value
-                        //     .bill_amount +
-                        //     "</td>");
                     });
-
-                    // $('.body_detail_bill').append("</tr>");
-                    // $('.body_detail_bill').append("</tbody>");
                 }
             });
         });
@@ -267,29 +244,6 @@
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
-                            {{-- <tbody>
-                                @foreach ($bills as $bill)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $bill->name }}</td>
-                                        <td>{{ $bill->tagihan . ' Tagihan' }}</td>
-                                        <td>
-                                            <span
-                                                class="font-extrabold badge bg-light-danger">{{ 'Rp ' . number_format($bill->total_bill, 2, ',', '.') }}</span>
-                                        </td>
-                                        <td class="d-flex justify-content-start align-items-center">
-                                            <a class="btn btn-sm btn-outline-primary" href="#"><i
-                                                    class="icon dripicons dripicons-plus text-primary"></i></a>
-                                            <a class="btn btn-sm btn-outline-danger mx-2" href="#"><i
-                                                    class="icon dripicons dripicons-trash text-danger"></i></a>
-                                            <a class="btn btn-sm btn-outline-warning me-2" href="#"><i
-                                                    class="icon dripicons dripicons-document-edit text-warning"></i></a>
-                                            <a class="btn btn-sm btn-outline-info" href="#"><i
-                                                    class="icon dripicons dripicons-information text-info"></i></a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody> --}}
                         </table>
                     </div>
                 </div>
@@ -381,10 +335,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    {{-- <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
-                        <i class="bx bx-x d-block d-sm-none"></i>
-                        <span class="d-none d-sm-block">Close</span>
-                    </button> --}}
                     <button type="button" class="btn btn-info ml-1" data-bs-dismiss="modal">
                         <i class="bx bx-check d-block d-sm-none"></i>
                         <span class="d-none d-sm-block">OK</span>

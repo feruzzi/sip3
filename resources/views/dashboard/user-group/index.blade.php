@@ -12,7 +12,7 @@
         $(document).ready(function() {
             let tb_group1 = $("#tb_group1").DataTable({
                 processing: true,
-                serverside: true,
+                serverSide: true,
                 autoWidth: false,
                 ajax: "{{ url('group1/data') }}",
                 dataSrc: '',
@@ -38,7 +38,7 @@
         $(document).ready(function() {
             let tb_group2 = $("#tb_group2").DataTable({
                 processing: true,
-                serverside: true,
+                serverSide: true,
                 autoWidth: false,
                 ajax: "{{ url('group2/data') }}",
                 dataSrc: '',
