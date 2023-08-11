@@ -21,6 +21,7 @@
                                         <th>Jumlah</th>
                                         <th>Dibayar</th>
                                         <th>Kekurangan</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -44,6 +45,10 @@
                                                 <span
                                                     class="font-extrabold badge {{ $bill->debit < 0 ? 'bg-light-danger' : 'bg-light-success' }}">{{ 'Rp ' . number_format($bill->debit, 2, ',', '.') }}
                                                 </span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url('checkout/' . $bill->bill_id) }}"
+                                                    class="btn btn-outline-primary">Bayar</a>
                                             </td>
                                         </tr>
                                     @endforeach

@@ -9,7 +9,8 @@ use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
+use Haruncpi\LaravelIdGenerator\IdGenerator;
+use App\Services\Midtrans\CreateSnapTokenService;
 
 class PageController extends Controller
 {
@@ -21,7 +22,7 @@ class PageController extends Controller
         $bills = DB::table('bills')
             ->select('users.name', 'bills.bill_id', 'payments.payment_name', 'bills.bill_amount', 'bills.date', DB::raw('COALESCE(transaksi,0) AS pay,COALESCE(transaksi,0)-bills.bill_amount AS debit'))
             ->join('payments', 'bills.payment_id', '=', 'payments.payment_id')
-            ->leftJoin(DB::raw('(SELECT transactions.bill_id, SUM(transactions.pay) AS transaksi FROM transactions GROUP BY transactions.bill_id) transactions'), 'bills.bill_id', '=', 'transactions.bill_id')
+            ->leftJoin(DB::raw('(SELECT transactions.bill_id, SUM(transactions.pay) AS transaksi FROM transactions WHERE transactions.status=1 GROUP BY transactions.bill_id) transactions'), 'bills.bill_id', '=', 'transactions.bill_id')
             ->join('users', 'bills.username', '=', 'users.username')
             ->where('bills.username', '=', $user)
             ->get();
@@ -46,9 +47,10 @@ class PageController extends Controller
     {
         $user = auth()->user()->username;
         $transactions = DB::table('transactions')
-            ->select(DB::raw('transactions.transaction_id,payments.payment_name,transactions.pay,users.name'))->join('users', 'transactions.username', '=', 'users.username')
+            ->select(DB::raw('transactions.transaction_id,transactions.pay_date,transactions.status,transactions.channel,payments.payment_name,transactions.pay,users.name'))->join('users', 'transactions.username', '=', 'users.username')
             ->join('payments', 'transactions.payment_id', '=', 'payments.payment_id')
             ->where('transactions.username', '=', $user)
+            ->orderBy('transactions.created_at')
             ->get();
         return view('transaction', [
             'set_active' => 'transaction',
@@ -109,5 +111,62 @@ class PageController extends Controller
             ]);
             return response()->json(['msg' => "Berhasil Mengganti Password"]);
         }
+    }
+    public function checkout($id)
+    {
+        $bills = DB::table('bills')
+            ->select('users.name', 'bills.bill_id', 'payments.payment_name', 'bills.bill_amount', 'bills.date', DB::raw('COALESCE(transaksi,0) AS pay,COALESCE(transaksi,0)-bills.bill_amount AS debit'))
+            ->join('payments', 'bills.payment_id', '=', 'payments.payment_id')
+            ->leftJoin(DB::raw('(SELECT transactions.bill_id, SUM(transactions.pay) AS transaksi FROM transactions WHERE transactions.status=1 GROUP BY transactions.bill_id) transactions'), 'bills.bill_id', '=', 'transactions.bill_id')
+            ->join('users', 'bills.username', '=', 'users.username')
+            ->where('bills.bill_id', '=', $id)
+            ->get();
+        $user = auth()->user()->username;
+        return view('payment-checkout', [
+            'name' => User::where('username', '=', $user)->value('name'),
+            'set_active' => 'checkout',
+            'bills' => $bills,
+        ]);
+    }
+    public function pay_checkout($id, Request $request)
+    {
+        // dd($id);
+        // If snap token is still NULL, generate snap token and save it to database
+        $bill = Bill::where('bill_id', $id)->first();
+        $pay = str_replace('.', '', $request->pay);
+        $prefix = "T" . date('y') . "-";
+        $transaction_id = IdGenerator::generate(['table' => 'transactions', 'field' => 'transaction_id', 'length' => 11, 'prefix' => $prefix, 'reset_on_prefix_change' => true]);
+        $midtrans = new CreateSnapTokenService($bill, $pay, $request->email, $transaction_id);
+        $snapToken = $midtrans->getSnapToken();
+        Transaction::create([
+            'transaction_id' => $transaction_id,
+            'username' => $bill->username,
+            'bill_id' => $bill->bill_id,
+            'payment_id' => $bill->payment_id,
+            'pay_date' => date("Y-m-d"),
+            'pay' => $pay,
+            'admin' => $bill->username,
+            'note' => $request->note,
+            'status' => 0,
+            'snap_token' => $snapToken
+        ]);
+        $bills = DB::table('bills')
+            ->select('users.name', 'bills.bill_id', 'payments.payment_name', 'bills.bill_amount', 'bills.date', DB::raw('COALESCE(transaksi,0) AS pay,COALESCE(transaksi,0)-bills.bill_amount AS debit'))
+            ->join('payments', 'bills.payment_id', '=', 'payments.payment_id')
+            ->leftJoin(DB::raw('(SELECT transactions.bill_id, SUM(transactions.pay) AS transaksi FROM transactions WHERE transactions.status=1 GROUP BY transactions.bill_id) transactions'), 'bills.bill_id', '=', 'transactions.bill_id')
+            ->join('users', 'bills.username', '=', 'users.username')
+            ->where('bills.bill_id', '=', $id)
+            ->get();
+        $user = auth()->user()->username;
+        $res = Transaction::where('transaction_id', $transaction_id)->first();
+        return view('payment-confirmation', [
+            'name' => User::where('username', '=', $user)->value('name'),
+            'set_active' => 'checkout',
+            'bills' => $bills,
+            'res' => $res,
+        ]);
+    }
+    public function pay_confirmation()
+    {
     }
 }

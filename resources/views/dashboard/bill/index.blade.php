@@ -12,7 +12,7 @@
         $(document).ready(function() {
             let tb_bill = $("#tb_bill").DataTable({
                 processing: true,
-                serverSide: true,
+                serverside: true,
                 autoWidth: false,
                 ajax: "{{ url('bill/data') }}",
                 dataSrc: '',

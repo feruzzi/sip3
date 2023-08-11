@@ -13,7 +13,7 @@
         $(document).ready(function() {
             let tb_payment = $("#tb_transaction").DataTable({
                 processing: true,
-                serverSide: true,
+                serverside: true,
                 autoWidth: false,
                 ajax: "{{ url('transaction/data') }}",
                 dataSrc: '',

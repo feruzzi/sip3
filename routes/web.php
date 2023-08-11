@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserGroupController;
@@ -39,11 +40,15 @@ Route::get('/', function () {
 // });
 Route::post('auth/login', [AuthController::class, 'authenticate']);
 Route::get('auth/logout', [AuthController::class, 'logout'])->middleware('auth');
+Route::post('payments/midtrans-notification', [PaymentCallbackController::class, 'receive']);
 
 //!!User Siswa
 Route::middleware(['auth', 'is_admin:0'])->group(function () {
     Route::get('info/bill', [PageController::class, 'info_bill']);
     Route::get('info/transaction', [PageController::class, 'info_transaction']);
+    Route::get('checkout/{id}', [PageController::class, 'checkout']);
+    Route::post('pay-checkout/{id}', [PageController::class, 'pay_checkout']);
+    Route::post('pay-confrimation/{id}', [PageController::class, 'pay_confirmation']);
     Route::get('change-password', [PageController::class, 'change_password']);
     Route::put('change-password/{id}', [PageController::class, 'update_password']);
 });

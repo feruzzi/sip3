@@ -18,7 +18,10 @@
                                         <th>No</th>
                                         <th>ID Transaksi</th>
                                         <th>Tagihan</th>
+                                        <th>Tanggal Pembayaran</th>
                                         <th>Membayar</th>
+                                        <th>Metode Pembayaran</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -31,15 +34,31 @@
                                                     class="font-extrabold badge bg-light-warning">{{ $transaction->payment_name }}
                                                 </span>
                                             </td>
+                                            <td>{{ $transaction->pay_date }}</td>
                                             <td>
                                                 <span
                                                     class="font-extrabold badge bg-light-success">{{ 'Rp ' . number_format($transaction->pay, 2, ',', '.') }}
                                                 </span>
                                             </td>
+                                            <td>
+                                                {{ $transaction->channel }}
+                                            </td>
+                                            <td>
+                                                @if ($transaction->status == 1)
+                                                    <span class="font-extrabold badge bg-light-success">Berhasil</span>
+                                                @elseif($transaction->status == 2)
+                                                    <span class="font-extrabold badge bg-light-secondary">Expired</span>
+                                                @elseif($transaction->status == 3)
+                                                    <span class="font-extrabold badge bg-light-danger">Batal</span>
+                                                @elseif($transaction->status == 0)
+                                                    <span class="font-extrabold badge bg-light-info">Menunggu
+                                                        Pembayaran</span>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                     <tr class="font-extrabold">
-                                        <td colspan="3">Total</td>
+                                        <td colspan="4">Total</td>
                                         <td>
                                             <span
                                                 class="font-extrabold badge bg-light-success">{{ 'Rp ' . number_format($transaction_total, 2, ',', '.') }}
