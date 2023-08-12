@@ -69,13 +69,13 @@ class PageController extends Controller
     }
     public function dashboard()
     {
-        $total_users = User::where('level', '=', 1)->get();
+        $total_users = User::where('level', '=', 0)->get();
         $total_bills = Bill::sum('bill_amount');
         $total_pay = Transaction::sum('pay');
         $bills = DB::table('bills')
             ->select('users.name', 'bills.bill_id', 'payments.payment_name', 'bills.bill_amount', 'bills.date', DB::raw('COALESCE(transaksi,0) AS pay,COALESCE(transaksi,0)-bills.bill_amount AS debit'))
             ->join('payments', 'bills.payment_id', '=', 'payments.payment_id')
-            ->leftJoin(DB::raw('(SELECT transactions.bill_id, SUM(transactions.pay) AS transaksi FROM transactions GROUP BY transactions.bill_id) transactions'), 'bills.bill_id', '=', 'transactions.bill_id')
+            ->leftJoin(DB::raw('(SELECT transactions.bill_id, SUM(transactions.pay) AS transaksi FROM transactions WHERE transactions.status=1 GROUP BY transactions.bill_id) transactions'), 'bills.bill_id', '=', 'transactions.bill_id')
             ->join('users', 'bills.username', '=', 'users.username')
             ->get();
         $bill_off = $bills->where('debit', '>=', 0)->count();

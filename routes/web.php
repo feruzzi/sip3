@@ -66,6 +66,10 @@ Route::middleware(['auth', 'is_admin:1'])->group(function () {
     Route::put('user/set/{id}', [UserController::class, 'set_user']);
     Route::post('user/import', [UserController::class, 'import_users']);
 
+    Route::get('manage-user-group', [UserController::class, 'manage_user_group']);
+    Route::post('user/filter', [UserController::class, 'filter_user']);
+    Route::put('user/edit/groups', [UserController::class, 'edit_groups']);
+
     Route::get('user-group', [UserGroupController::class, 'index']);
 
     Route::get('group1/data', [UserGroupController::class, 'group1_view']);

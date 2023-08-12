@@ -77,18 +77,21 @@
                             </a>
                         </li>
                         <li
-                            class="sidebar-item {{ $set_active == 'users' || $set_active == 'user_group' ? 'active' : '' }} has-sub">
+                            class="sidebar-item {{ $set_active == 'users' || $set_active == 'user_group' || $set_active == 'manage_users' ? 'active' : '' }} has-sub">
                             <a href="#" class='sidebar-link'>
                                 <i class="icon dripicons dripicons-user-group"></i>
                                 <span>Users</span>
                             </a>
                             <ul
-                                class="submenu {{ $set_active == 'users' || $set_active == 'user_group' ? 'd-block' : '' }}">
+                                class="submenu {{ $set_active == 'users' || $set_active == 'user_group' || $set_active == 'manage_users' ? 'd-block' : '' }}">
                                 <li class="submenu-item {{ $set_active == 'user_group' ? 'active' : '' }}">
                                     <a href="{{ url('user-group') }}">Tahun Dan Jurusan</a>
                                 </li>
                                 <li class="submenu-item {{ $set_active == 'users' ? 'active' : '' }}">
                                     <a href="{{ url('users') }}">Kelola Users</a>
+                                </li>
+                                <li class="submenu-item {{ $set_active == 'manage_users' ? 'active' : '' }}">
+                                    <a href="{{ url('manage-user-group') }}">Kelola Kelompok Users</a>
                                 </li>
                             </ul>
                         </li>
@@ -122,7 +125,7 @@
                                     <a href="{{ url('transaction') }}">Transaksi</a>
                                 </li>
                                 <li class="submenu-item {{ $set_active == 'detail_transaction' ? 'active' : '' }}">
-                                    <a href="{{ url('detail-transaction') }}">Detail Transaksi</a>
+                                    <a href="{{ url('detail-transaction') }}">Riwayat Transaksi</a>
                                 </li>
                             </ul>
                         </li>

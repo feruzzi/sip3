@@ -50,7 +50,7 @@ class TransactionController extends Controller
     public function ajax_view()
     {
         // $transactions = DB::select('SELECT bills.username,users.name,users.group1,users.group2,COALESCE(transaksi,0)-SUM(bills.bill_amount) AS debit FROM bills LEFT JOIN (SELECT transactions.username, SUM(transactions.pay) AS transaksi FROM transactions GROUP BY transactions.username) transactions ON bills.username = transactions.username INNER JOIN users ON bills.username = users.username GROUP BY bills.username');
-        $transactions = DB::select('SELECT bills.username,users.name,users.group1,group1.group1_name AS group1_name,users.group2,group2.group2_name AS group2_name,COALESCE(transaksi,0)-SUM(bills.bill_amount) AS debit FROM bills LEFT JOIN (SELECT transactions.username, SUM(transactions.pay) AS transaksi FROM transactions GROUP BY transactions.username) transactions ON bills.username = transactions.username INNER JOIN (users INNER JOIN group1 ON users.group1 = group1.group1_id INNER JOIN group2 ON users.group2 = group2.group2_id) ON bills.username = users.username GROUP BY bills.username');
+        $transactions = DB::select('SELECT bills.username,users.name,users.group1,group1.group1_name AS group1_name,users.group2,group2.group2_name AS group2_name,COALESCE(transaksi,0)-SUM(bills.bill_amount) AS debit FROM bills LEFT JOIN (SELECT transactions.username, SUM(transactions.pay) AS transaksi FROM transactions WHERE transactions.status=1 GROUP BY transactions.username) transactions ON bills.username = transactions.username INNER JOIN (users INNER JOIN group1 ON users.group1 = group1.group1_id INNER JOIN group2 ON users.group2 = group2.group2_id) ON bills.username = users.username GROUP BY bills.username');
         return Datatables::of($transactions)
             ->addIndexColumn()
             ->addColumn('description', function ($transactions) {
@@ -63,9 +63,10 @@ class TransactionController extends Controller
     }
     public function detail_ajax_view()
     {
-        $detail_transactions = DB::table('transactions')->select('transactions.transaction_id', 'transactions.username', 'users.name', 'payments.payment_name', 'transactions.pay', 'transactions.pay_date', 'transactions.note')
+        $detail_transactions = DB::table('transactions')->select('transactions.transaction_id', 'transactions.username', 'users.name', 'payments.payment_name', 'transactions.pay', 'transactions.pay_date', 'transactions.note', 'transactions.channel')
             ->join('payments', 'transactions.payment_id', '=', 'payments.payment_id')
             ->join('users', 'transactions.username', '=', 'users.username')
+            ->orderBy('transactions.created_at', 'desc')
             ->get();
         return Datatables::of($detail_transactions)
             ->addIndexColumn()
@@ -79,7 +80,7 @@ class TransactionController extends Controller
     }
     public function detail_transaction($id)
     {
-        $transaction_details = DB::select('SELECT users.name,bills.bill_id,payments.payment_name,bills.bill_amount,COALESCE(transaksi,0) AS pay,COALESCE(transaksi,0)-bills.bill_amount AS debit FROM bills INNER JOIN payments ON bills.payment_id=payments.payment_id LEFT JOIN (SELECT transactions.bill_id, SUM(transactions.pay) AS transaksi FROM transactions GROUP BY transactions.bill_id) transactions ON bills.bill_id=transactions.bill_id INNER JOIN users ON bills.username=users.username  WHERE bills.username="' . $id . '"');
+        $transaction_details = DB::select('SELECT users.name,bills.bill_id,payments.payment_name,bills.bill_amount,COALESCE(transaksi,0) AS pay,COALESCE(transaksi,0)-bills.bill_amount AS debit FROM bills INNER JOIN payments ON bills.payment_id=payments.payment_id LEFT JOIN (SELECT transactions.bill_id, SUM(transactions.pay) AS transaksi FROM transactions WHERE transactions.status=1 GROUP BY transactions.bill_id) transactions ON bills.bill_id=transactions.bill_id INNER JOIN users ON bills.username=users.username  WHERE bills.username="' . $id . '"');
         return response()->json($transaction_details);
         // SELECT bills.username,users.name,users.group1,users.group2,COALESCE(transaksi,0)-SUM(bills.bill_amount) AS debit FROM bills LEFT JOIN (SELECT transactions.username, SUM(transactions.pay) AS transaksi FROM transactions GROUP BY transactions.username) transactions ON bills.username = transactions.username INNER JOIN users ON bills.username = users.username WHERE bills.username="nama1" GROUP BY bills.bill_id 
     }
@@ -119,6 +120,8 @@ class TransactionController extends Controller
                 'pay_date' => $request->date,
                 'pay' => $request->pay,
                 'admin' => 'admin',
+                'status' => 1,
+                'channel' => "Bayar Ditempat",
                 'note' => $request->note
 
             ]);

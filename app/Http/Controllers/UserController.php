@@ -211,4 +211,56 @@ class UserController extends Controller
         Excel::import(new UsersImport, request()->file('file'));
         return response()->json(['msg' => "Data User Berhasil Di Upload"]);
     }
+    public function manage_user_group()
+    {
+        return view('dashboard.users.manage-user-group', [
+            'set_active' => 'manage_users',
+            'groups1' => Group1::where("group1_status", 1)->get(),
+            'groups2' => Group2::where("group2_status", 1)->get(),
+            // 'users' => User::all(),
+            // 'users' => $users
+        ]);
+    }
+    public function filter_user(Request $request)
+    {
+        $g1 = $request->group1;
+        $g2 = $request->group2;
+        if ($g1 != "" && $g2 != "") {
+            $filtered_users = User::where('group1', $request->group1)->where('group2', $request->group2)
+                ->join('group1', 'users.group1', '=', 'group1.group1_id')
+                ->join('group2', 'users.group2', '=', 'group2.group2_id');
+        } elseif ($g1 != "") {
+            $filtered_users = User::where('group1', $request->group1)
+                ->join('group1', 'users.group1', '=', 'group1.group1_id')
+                ->join('group2', 'users.group2', '=', 'group2.group2_id');
+        } elseif ($g2 != "") {
+            $filtered_users = User::where('group2', $request->group2)
+                ->join('group1', 'users.group1', '=', 'group1.group1_id')
+                ->join('group2', 'users.group2', '=', 'group2.group2_id');
+        } else {
+            $filtered_users = User::join('group1', 'users.group1', '=', 'group1.group1_id')
+                ->join('group2', 'users.group2', '=', 'group2.group2_id');
+        }
+        $filtered_users = $filtered_users->get();
+        $count_users = $filtered_users->count();
+        if ($count_users == 0) {
+            $msg = "Tidak Ditemukan Users dengan Parameter " . $g1 . " dan " . $g2;
+        } else {
+            $msg = $count_users . " Users Berhasil Ditemukan";
+        }
+        return response()->json(['res' => $filtered_users, 'msg' => $msg]);
+    }
+    public function edit_groups(Request $request)
+    {
+        $g1 = $request->group1;
+        $g2 = $request->group2;
+
+        for ($i = 0; $i < count($request->users); $i++) {
+            User::where('username', $request->users[$i])->update([
+                'group1' => $g1,
+                'group2' => $g2,
+            ]);
+        }
+        return response()->json(['msg' => count($request->users) . " Berhasil Diperbarui"]);
+    }
 }

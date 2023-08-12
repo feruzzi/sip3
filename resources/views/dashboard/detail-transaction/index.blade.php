@@ -36,6 +36,9 @@
                         data: 'pay_date',
                     },
                     {
+                        data: 'channel',
+                    },
+                    {
                         data: 'note',
                     }, {
                         data: 'action'
@@ -183,6 +186,7 @@
                                     <th>Pembayaran</th>
                                     <th>Bayar</th>
                                     <th>Tanggal</th>
+                                    <th>Metode Pembayaran</th>
                                     <th>Keterangan</th>
                                     <th>Aksi</th>
                                 </tr>
